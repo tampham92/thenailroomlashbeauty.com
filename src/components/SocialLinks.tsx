@@ -1,4 +1,6 @@
-import { site } from "@/data/site";
+"use client";
+
+import { useSite } from "./SiteProvider";
 
 export default function SocialLinks({
   className = "",
@@ -7,6 +9,7 @@ export default function SocialLinks({
   className?: string;
   size?: number;
 }) {
+  const site = useSite();
   const items = [
     {
       href: site.social.facebook,

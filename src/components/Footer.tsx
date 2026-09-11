@@ -1,10 +1,14 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { nav, site } from "@/data/site";
+import { nav } from "@/data/nav";
+import { useSite } from "./SiteProvider";
 import BookNowButton from "./BookNowButton";
 import SocialLinks from "./SocialLinks";
 
 export default function Footer() {
+  const site = useSite();
   return (
     <footer className="bg-beige text-graphite">
       <div className="container-tnr py-14 sm:py-20">

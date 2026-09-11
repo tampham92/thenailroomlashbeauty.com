@@ -1,4 +1,6 @@
-import { site } from "@/data/site";
+"use client";
+
+import { useSite } from "./SiteProvider";
 
 type Props = {
   className?: string;
@@ -20,6 +22,7 @@ export default function BookNowButton({
   label = "Book now",
   variant = "solid",
 }: Props) {
+  const site = useSite();
   return (
     <a
       href={site.bookingUrl}

@@ -3,7 +3,7 @@ import PageHero from "@/components/PageHero";
 import Section from "@/components/Section";
 import SectionHeading from "@/components/SectionHeading";
 import CtaBanner from "@/components/CtaBanner";
-import { serviceCategories } from "@/data/services";
+import { getServiceCategories } from "@/data/services";
 
 export const metadata: Metadata = {
   title: "Services & Pricing",
@@ -12,7 +12,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/services" },
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const serviceCategories = await getServiceCategories();
+
   return (
     <>
       <PageHero

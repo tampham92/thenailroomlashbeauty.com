@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
 import Section from "@/components/Section";
 import CtaBanner from "@/components/CtaBanner";
-import { site } from "@/data/site";
+import { getSite } from "@/data/site";
 import { getTestimonials } from "@/data/testimonials";
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 export default async function TestimonialsPage() {
-  const testimonials = await getTestimonials();
+  const [testimonials, site] = await Promise.all([getTestimonials(), getSite()]);
 
   return (
     <>

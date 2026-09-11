@@ -1,13 +1,34 @@
 import Link from "next/link";
-import { readGalleries, readHome, readTeam, readTestimonials } from "@/lib/content";
+import {
+  readGalleries,
+  readHome,
+  readPolicy,
+  readServices,
+  readSite,
+  readTeam,
+  readTestimonials,
+} from "@/lib/content";
 
 export default async function AdminDashboard() {
-  const [{ galleries }, team, { testimonials }, home] = await Promise.all([
+  const [
+    { galleries },
+    team,
+    { testimonials },
+    home,
+    { categories },
+    policy,
+    site,
+  ] = await Promise.all([
     readGalleries(),
     readTeam(),
     readTestimonials(),
     readHome(),
+    readServices(),
+    readPolicy(),
+    readSite(),
   ]);
+
+  const serviceCount = categories.reduce((sum, c) => sum + c.items.length, 0);
 
   const imageCount = galleries.reduce((sum, g) => sum + g.images.length, 0);
 
@@ -38,6 +59,24 @@ export default async function AdminDashboard() {
           ? "None yet"
           : `${testimonials.length} published`,
       body: "Add client reviews shown on the Testimonials page.",
+    },
+    {
+      href: "/admin/services",
+      title: "Services & pricing",
+      stat: `${categories.length} categories · ${serviceCount} services`,
+      body: "The full price menu: names, prices, durations and descriptions.",
+    },
+    {
+      href: "/admin/policy",
+      title: "Salon policy",
+      stat: `${policy.policies.length} policies`,
+      body: "Cancellation, deposits, late arrivals and the rest of the house rules.",
+    },
+    {
+      href: "/admin/settings",
+      title: "Business details",
+      stat: site.phone,
+      body: "Booking link, phone, email, address and social profiles.",
     },
   ];
 

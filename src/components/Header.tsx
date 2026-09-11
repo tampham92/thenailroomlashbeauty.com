@@ -4,10 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { nav, site } from "@/data/site";
+import { nav } from "@/data/nav";
+import { useSite } from "./SiteProvider";
 import BookNowButton from "./BookNowButton";
 
 export default function Header() {
+  const site = useSite();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);

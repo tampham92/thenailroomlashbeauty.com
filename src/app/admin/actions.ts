@@ -9,6 +9,12 @@ import {
   startSession,
 } from "@/lib/auth";
 import {
+  writeSite,
+  writeServices,
+  writePolicy,
+  type ServicesFile,
+  type PolicyFile,
+  type SiteFile,
   readHome,
   writeHome,
   type HomeFile,
@@ -265,6 +271,180 @@ export async function saveTeamAction(
 
   revalidateSite();
   return { ok: "Team saved." };
+}
+
+/* -------------------------------------------------------------- settings */
+
+export async function saveSiteAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireAuth();
+
+  const payload = String(formData.get("payload") ?? "");
+
+  let next: SiteFile;
+  try {
+    next = JSON.parse(payload);
+  } catch {
+    return { error: "Could not read the submitted data." };
+  }
+
+  const required: [string, string | undefined][] = [
+    ["Business name", next.name],
+    ["Phone number", next.phone],
+    ["Email", next.email],
+    ["Booking URL", next.bookingUrl],
+  ];
+  for (const [label, value] of required) {
+    if (!value?.trim()) return { error: `${label} is required.` };
+  }
+
+  if (!/^\S+@\S+\.\S+$/.test(next.email.trim())) {
+    return { error: "That email address does not look valid." };
+  }
+
+  for (const [label, url] of [
+    ["Booking URL", next.bookingUrl],
+    ["Map link", next.address.mapUrl],
+    ["Facebook URL", next.social.facebook],
+    ["Instagram URL", next.social.instagram],
+  ] as const) {
+    if (!url?.trim()) continue;
+    try {
+      const parsed = new URL(url);
+      if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+        throw new Error("bad protocol");
+      }
+    } catch {
+      return { error: `${label} must be a full URL starting with https://` };
+    }
+  }
+
+  if (!next.phone.replace(/[^\d]/g, "")) {
+    return { error: "Phone number needs at least one digit." };
+  }
+
+  await writeSite({
+    name: next.name.trim(),
+    shortName: (next.shortName || next.name).trim(),
+    description: (next.description ?? "").trim(),
+    bookingUrl: next.bookingUrl.trim(),
+    phone: next.phone.trim(),
+    email: next.email.trim(),
+    address: {
+      street: (next.address.street ?? "").trim(),
+      city: (next.address.city ?? "").trim(),
+      region: (next.address.region ?? "").trim(),
+      postalCode: (next.address.postalCode ?? "").trim(),
+      country: (next.address.country ?? "").trim(),
+      mapUrl: (next.address.mapUrl ?? "").trim(),
+    },
+    social: {
+      facebook: (next.social.facebook ?? "").trim(),
+      instagram: (next.social.instagram ?? "").trim(),
+    },
+  });
+
+  revalidateSite();
+  return { ok: "Business details saved." };
+}
+
+/* -------------------------------------------------------------- services */
+
+export async function saveServicesAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireAuth();
+
+  const payload = String(formData.get("payload") ?? "");
+
+  let next: ServicesFile;
+  try {
+    next = JSON.parse(payload);
+  } catch {
+    return { error: "Could not read the submitted data." };
+  }
+
+  const ids = new Set<string>();
+  for (const [index, category] of next.categories.entries()) {
+    if (!category.title?.trim()) {
+      return { error: `Category #${index + 1} needs a title.` };
+    }
+    const id = (category.id || category.title)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+    if (!id) return { error: `Category #${index + 1} needs a usable title.` };
+    if (ids.has(id)) {
+      return { error: `Two categories resolve to the same anchor "${id}".` };
+    }
+    ids.add(id);
+    category.id = id;
+
+    const unnamed = category.items.findIndex((i) => !i.name?.trim());
+    if (unnamed !== -1) {
+      return {
+        error: `"${category.title}" service #${unnamed + 1} needs a name.`,
+      };
+    }
+  }
+
+  await writeServices({
+    categories: next.categories.map((c) => ({
+      id: c.id,
+      title: c.title.trim(),
+      items: c.items.map((i) => ({
+        name: i.name.trim(),
+        ...(i.price?.trim() ? { price: i.price.trim() } : {}),
+        ...(i.duration?.trim() ? { duration: i.duration.trim() } : {}),
+        ...(i.subtitle?.trim() ? { subtitle: i.subtitle.trim() } : {}),
+        ...(i.headline?.trim() ? { headline: i.headline.trim() } : {}),
+        body: (i.body ?? []).map((b) => b.trim()).filter(Boolean),
+      })),
+    })),
+  });
+
+  revalidateSite();
+  return { ok: "Services saved." };
+}
+
+/* ---------------------------------------------------------------- policy */
+
+export async function savePolicyAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireAuth();
+
+  const payload = String(formData.get("payload") ?? "");
+
+  let next: PolicyFile;
+  try {
+    next = JSON.parse(payload);
+  } catch {
+    return { error: "Could not read the submitted data." };
+  }
+
+  const incomplete = next.policies.findIndex(
+    (p) => !p.title?.trim() || !p.body?.trim(),
+  );
+  if (incomplete !== -1) {
+    return { error: `Policy #${incomplete + 1} needs a title and a body.` };
+  }
+
+  await writePolicy({
+    intro: (next.intro ?? "").trim(),
+    policies: next.policies.map((p) => ({
+      title: p.title.trim(),
+      body: p.body.trim(),
+    })),
+    outro: (next.outro ?? "").trim(),
+  });
+
+  revalidateSite();
+  return { ok: `Saved ${next.policies.length} policies.` };
 }
 
 /* ---------------------------------------------------------- testimonials */

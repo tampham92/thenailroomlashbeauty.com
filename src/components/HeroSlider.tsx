@@ -3,13 +3,14 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import BookNowButton from "./BookNowButton";
-import { site } from "@/data/site";
+import { useSite } from "./SiteProvider";
 
 type Hero = { slides: string[]; tagline: string; intro: string };
 
 const INTERVAL = 6000;
 
 export default function HeroSlider({ hero }: { hero: Hero }) {
+  const site = useSite();
   const [index, setIndex] = useState(0);
 
   useEffect(() => {

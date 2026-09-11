@@ -16,6 +16,9 @@ const links = [
   { href: "/admin/gallery", label: "Gallery" },
   { href: "/admin/team", label: "Team" },
   { href: "/admin/testimonials", label: "Testimonials" },
+  { href: "/admin/services", label: "Services" },
+  { href: "/admin/policy", label: "Policy" },
+  { href: "/admin/settings", label: "Business details" },
 ];
 
 export default function AdminLayout({ children }: LayoutProps<"/admin">) {

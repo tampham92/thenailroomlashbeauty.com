@@ -1,15 +1,20 @@
 import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
 import Section from "@/components/Section";
-import { policies, policyIntro, policyOutro } from "@/data/policy";
+import { getPolicy } from "@/data/policy";
 
-export const metadata: Metadata = {
-  title: "Salon Policy",
-  description: policyIntro,
-  alternates: { canonical: "/policy" },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { intro } = await getPolicy();
+  return {
+    title: "Salon Policy",
+    description: intro,
+    alternates: { canonical: "/policy" },
+  };
+}
 
-export default function PolicyPage() {
+export default async function PolicyPage() {
+  const { intro: policyIntro, policies, outro: policyOutro } = await getPolicy();
+
   return (
     <>
       <PageHero eyebrow="Good to know" title="Salon Policy" lead={policyIntro} />

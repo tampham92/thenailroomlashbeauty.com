@@ -8,7 +8,7 @@ https://thenailroomlashbeauty.com — all content is static and lives in `src/da
 - Next.js 16 (App Router, Turbopack) + React 19
 - TypeScript, Tailwind CSS v4
 - Fonts: Cormorant Garamond (display) + Jost (body) via `next/font`
-- Built-in admin at `/admin` (password-protected) for homepage, gallery, team and testimonials
+- Built-in admin at `/admin` (password-protected) for nearly all site content
 - No external CMS: editable content is JSON in `content/`, images on disk
 
 ## Getting started
@@ -56,6 +56,9 @@ Plus `/sitemap.xml`, `/robots.txt` and a custom 404.
 - **Team** — add/remove/reorder members, upload photos, edit roles and bios
 - **Testimonials** — add, edit, reorder (the public page shows a "leave a review"
   panel while the list is empty)
+- **Services & pricing** — categories and the full price menu
+- **Salon policy** — intro, numbered policies, closing line
+- **Business details** — booking link, phone, email, address, socials, SEO text
 
 Saving writes the JSON file and calls `revalidatePath`, so the static public
 pages regenerate immediately.
@@ -82,7 +85,10 @@ Editable through `/admin`:
 
 | File | What it controls |
 | --- | --- |
+| `content/site.json` | Booking link, phone, email, address, socials, SEO text |
 | `content/home.json` | Every homepage section |
+| `content/services.json` | Service categories, prices and descriptions |
+| `content/policy.json` | Salon policy |
 | `content/galleries.json` | Gallery categories and their images |
 | `content/team.json` | Team members, roles, bios, photos |
 | `content/testimonials.json` | Client testimonials |
@@ -91,9 +97,14 @@ Code-only (edit and redeploy):
 
 | File | What it controls |
 | --- | --- |
-| `src/data/site.ts` | Business name, phone, email, address, socials, **Fresha booking URL**, nav |
-| `src/data/services.ts` | Full service menu and pricing (the Services page) |
-| `src/data/policy.ts` | Salon policy items |
+| `src/data/nav.ts` | Header/footer navigation — mirrors the routes, so it stays in code |
+| `src/lib/site-shape.ts` | `SITE_CONFIG`: the canonical site URL and logo path |
+
+Derived values are computed, not stored: the `tel:` link comes from the phone
+number and the one-line address from its parts, so they cannot drift apart.
+
+Client components (header, footer, booking button) read the business details
+through `SiteProvider`; server components call `getSite()`.
 
 ## Deploying
 
