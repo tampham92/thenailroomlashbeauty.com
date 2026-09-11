@@ -117,6 +117,10 @@ point `CONTENT_DIR` and `UPLOAD_DIR` at paths **outside the checkout**
 would otherwise overwrite it). Set `SITE_URL` per environment, and
 `SITE_NOINDEX=1` on anything that is not production.
 
+Because that state lives outside git, moving servers means carrying it across:
+`npm run content:export`, copy the archive, `npm run content:import`, then
+`npm run content:check` to confirm no referenced image went missing.
+
 ## Notes on the migration
 
 - The original `/testimonials` page was published empty, so there was no content
