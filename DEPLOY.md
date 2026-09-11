@@ -23,8 +23,21 @@ had edited.
 
 ## 1. Prerequisites
 
+Node must be installed **system-wide**, not through nvm/fnm under `/root`. The
+service runs as `www-data`, which cannot see another user's nvm install — and
+the systemd unit hardens the process with `ProtectHome=true`, so `/root` is
+unreadable to it regardless.
+
 ```bash
-node -v          # needs 20.9+, 22 LTS recommended
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
+
+Verify, as the user that will actually run the app:
+
+```bash
+which npm                      # expect /usr/bin/npm
+sudo -u www-data /usr/bin/node -v
 nginx -v
 ```
 
@@ -52,9 +65,13 @@ as the deploying user.
 
 ```bash
 sudo cp /var/www/thenailroom/deploy/thenailroom.env.example /etc/thenailroom.env
-sudo chmod 600 /etc/thenailroom.env
+sudo chown root:www-data /etc/thenailroom.env
+sudo chmod 640 /etc/thenailroom.env
 sudo nano /etc/thenailroom.env
 ```
+
+`640` with group `www-data`: the build runs as that user and has to read this
+file. It stays unreadable to everyone else.
 
 Fill in:
 
@@ -80,9 +97,12 @@ set `SITE_URL` to the production domain there.
 ```bash
 cd /var/www/thenailroom
 sudo -u www-data npm ci
-sudo -u www-data --preserve-env=CONTENT_DIR,UPLOAD_DIR,SITE_URL,SITE_NOINDEX \
-     env $(grep -v '^#' /etc/thenailroom.env | xargs) npm run deploy:build
+sudo -u www-data bash -c 'set -a; . /etc/thenailroom.env; set +a; npm run deploy:build'
 ```
+
+Sourcing the file is deliberate: piping it through `xargs` breaks as soon as a
+value contains a space or a quote. If a value does contain spaces, quote it in
+the env file (`ADMIN_PASSWORD="two words"`).
 
 `deploy:build` seeds `CONTENT_DIR` from the repo defaults (existing files are
 never overwritten) and then runs `next build`. The build prerenders pages from
@@ -129,7 +149,7 @@ Certbot edits the same file to add the TLS block and the HTTP redirect.
 cd /var/www/thenailroom
 sudo -u www-data git pull
 sudo -u www-data npm ci
-sudo -u www-data env $(grep -v '^#' /etc/thenailroom.env | xargs) npm run deploy:build
+sudo -u www-data bash -c 'set -a; . /etc/thenailroom.env; set +a; npm run deploy:build'
 sudo systemctl restart thenailroom
 ```
 
@@ -142,8 +162,8 @@ it all:
 
 ```bash
 cd /var/www/thenailroom
-sudo -u www-data env $(grep -v '^#' /etc/thenailroom.env | xargs) \
-     npm run content:export -- /var/backups/thenailroom-$(date +%F).tar.gz
+sudo -u www-data bash -c 'set -a; . /etc/thenailroom.env; set +a; \
+     npm run content:export -- /var/backups/thenailroom-'$(date +%F)'.tar.gz'
 ```
 
 Back that up on a schedule. The checkout itself is disposable — `git clone`
@@ -161,8 +181,8 @@ On the old server:
 
 ```bash
 cd /var/www/thenailroom
-sudo -u www-data env $(grep -v '^#' /etc/thenailroom.env | xargs) \
-     npm run content:export -- /tmp/thenailroom-content.tar.gz
+sudo -u www-data bash -c 'set -a; . /etc/thenailroom.env; set +a; \
+     npm run content:export -- /tmp/thenailroom-content.tar.gz'
 ```
 
 Copy it across, then on the new server — after steps 1–4 of this guide:
@@ -171,11 +191,10 @@ Copy it across, then on the new server — after steps 1–4 of this guide:
 scp /tmp/thenailroom-content.tar.gz newserver:/tmp/
 
 cd /var/www/thenailroom
-sudo -u www-data env $(grep -v '^#' /etc/thenailroom.env | xargs) \
-     npm run content:import -- /tmp/thenailroom-content.tar.gz --force
+sudo -u www-data bash -c 'set -a; . /etc/thenailroom.env; set +a; \
+     npm run content:import -- /tmp/thenailroom-content.tar.gz --force'
 
-sudo -u www-data env $(grep -v '^#' /etc/thenailroom.env | xargs) \
-     npm run content:check
+sudo -u www-data bash -c 'set -a; . /etc/thenailroom.env; set +a; npm run content:check'
 ```
 
 `content:import` refuses to overwrite a populated destination unless `--force`
@@ -190,7 +209,7 @@ visitors do.
 Then rebuild, because pages are prerendered from the content:
 
 ```bash
-sudo -u www-data env $(grep -v '^#' /etc/thenailroom.env | xargs) npm run deploy:build
+sudo -u www-data bash -c 'set -a; . /etc/thenailroom.env; set +a; npm run deploy:build'
 sudo systemctl restart thenailroom
 ```
 
@@ -198,12 +217,12 @@ Remember to update `SITE_URL` in `/etc/thenailroom.env` if the domain changed.
 
 ### Content commands
 
-| Command | What it does |
-| --- | --- |
-| `npm run content:init` | Seeds `CONTENT_DIR` from the repo defaults; never overwrites |
-| `npm run content:export -- out.tar.gz` | Bundles content + uploads into one archive |
-| `npm run content:import -- in.tar.gz [--force]` | Restores an archive |
-| `npm run content:check` | Verifies every referenced image exists |
+| Command                                           | What it does                                                  |
+| ------------------------------------------------- | ------------------------------------------------------------- |
+| `npm run content:init`                          | Seeds`CONTENT_DIR` from the repo defaults; never overwrites |
+| `npm run content:export -- out.tar.gz`          | Bundles content + uploads into one archive                    |
+| `npm run content:import -- in.tar.gz [--force]` | Restores an archive                                           |
+| `npm run content:check`                         | Verifies every referenced image exists                        |
 
 All four read `CONTENT_DIR` and `UPLOAD_DIR` from the environment.
 
