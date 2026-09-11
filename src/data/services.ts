@@ -1,0 +1,212 @@
+export type ServiceItem = {
+  name: string;
+  price?: string;
+  duration?: string;
+  subtitle?: string;
+  headline?: string;
+  body: string[];
+};
+
+export type ServiceCategory = {
+  id: string;
+  title: string;
+  items: ServiceItem[];
+};
+
+export const serviceCategories: ServiceCategory[] = [
+  {
+    id: "nails",
+    title: "Nails",
+    items: [
+      {
+        name: "Acrylic",
+        price: "New set 65+ / fill 60+",
+        headline: "Durable Length & Sculpted Beauty",
+        body: [
+          "Achieve strong, beautifully shaped nails with our professional acrylic enhancements. Ideal for added length, dramatic shapes, and long-lasting wear, acrylic nails provide a durable foundation for both classic styles and detailed designs.",
+          "Customized by our skilled nail artists, this service is perfect for clients who love statement nails that stay flawless for weeks.",
+        ],
+      },
+      {
+        name: "Gel Builder",
+        price: "New set 70+ / fill 65+",
+        headline: "Lightweight Strength. Natural Look.",
+        body: [
+          "Gel Builder reinforces your natural nails with flexible, long-lasting strength while maintaining a refined, lightweight feel. Perfect for supporting healthy nail growth and preventing breakage, this service delivers smooth, elegant results suited for both everyday wear and professionals seeking durability without bulk.",
+        ],
+      },
+      {
+        name: "Gel-X Extensions",
+        price: "New set 75+ / fill 70+",
+        headline: "Modern Extensions with a Natural Feel",
+        body: [
+          "Gel-X offers lightweight, full-coverage extensions that create instant length with a comfortable, natural appearance. This soak-off soft gel system minimizes heavy filing while providing glossy, long-lasting results — ideal for clients who want beautiful extensions with a gentler approach.",
+        ],
+      },
+      {
+        name: "BIAB Manicure",
+        price: "65+",
+        subtitle: "(Builder in a Bottle)",
+        headline: "Strengthen and Grow Your Natural Nails",
+        body: [
+          "BIAB is designed to add structure and protection to your natural nails while promoting healthier growth. This self-leveling builder gel creates a clean, polished look with lasting durability — perfect for clients who love strong, natural-looking nails with low maintenance.",
+        ],
+      },
+      {
+        name: "TNR Signature Manicure",
+        price: "60+",
+        headline: "Nourish. Restore. Glow.",
+        body: [
+          "Elevate your nail care with our TNR Signature Manicure — designed to refresh the hands while delivering lasting hydration and softness. This service includes precise nail shaping, detailed cuticle care, gentle exfoliation, and a collagen hydration mask to improve skin elasticity and smoothness.",
+          "A luxurious gold-infused moisturizer deeply nourishes, boosts circulation, and enhances radiance, while a relaxing massage melts away tension. Finished with your choice of premium polish, your hands are left silky-soft, healthy, and beautifully polished.",
+          "Perfect for maintaining elegant, well-cared-for hands while indulging in a moment of elevated self-care.",
+        ],
+      },
+      {
+        name: "Gel Polish Manicure",
+        price: "45+",
+        headline: "Chip-Resistant Shine That Lasts",
+        body: [
+          "Enjoy a flawless, high-gloss manicure with long-lasting gel polish. This service includes detailed nail care and expert application for a smooth, durable finish that keeps your nails looking freshly done for weeks — ideal for busy lifestyles and effortless elegance.",
+        ],
+      },
+      {
+        name: "Gel Polish Change",
+        price: "35+",
+        body: ["A quick refresh for your nails with a new gel color."],
+      },
+      {
+        name: "Nail Art Simple",
+        price: "10+",
+        body: [
+          "Minimal designs like chrome, cat eye, French tips, lines, dots, or subtle accents.",
+        ],
+      },
+      {
+        name: "Nail Art Advanced",
+        price: "15+",
+        body: [
+          "Detailed or intricate designs including 3D, seasonal, cartoon, or artistic creations.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "pedicures",
+    title: "Pedicures",
+    items: [
+      {
+        name: "TNR Gold Pedicure",
+        price: "100+",
+        duration: "~1:15 hr",
+        body: [
+          "Our most indulgent pedicure is designed for those who seek exceptional care, deep relaxation, and a truly elevated spa experience.",
+          "This luxurious treatment begins with essential nail and cuticle care, followed by a premium exfoliating treatment to smooth, soften, and renew the skin. An intensive gold hydration mask is then applied to deeply nourish and restore moisture, leaving your feet visibly healthier and radiant.",
+          "Unwind with an extended leg and foot massage incorporating gua sha techniques to improve circulation, relieve tension, and promote overall wellness. Warm hot stone therapy further relaxes tired muscles, while a comforting neck warmer completes the experience — allowing your entire body to fully relax.",
+          "Finished with your choice of premium polish, this pedicure delivers both impeccable results and an unforgettable moment of calm.",
+          "Perfect for special occasions, busy lifestyles, or anyone ready to invest in premium self-care, our Luxury Signature Pedicure is more than a service — it’s time set aside just for you.",
+        ],
+      },
+      {
+        name: "Spa Pedicure",
+        price: "75+",
+        duration: "~1 hr",
+        body: [
+          "Treat your feet to a revitalizing spa experience designed to restore comfort, hydration, and softness.",
+          "Begin with a relaxing soak to refresh tired feet, followed by essential nail and cuticle care for a clean, polished finish. A professional exfoliation gently removes dry skin, revealing a smoother, healthier appearance.",
+          "A deeply nourishing collagen mask helps improve elasticity while delivering lasting hydration — perfect for maintaining soft, youthful-looking feet. Enjoy a soothing massage that melts away tension and promotes circulation before your service is completed with your choice of premium polish.",
+          "Ideal for regular self-care or when your feet need extra attention, our Spa Pedicure offers the perfect balance of results and relaxation.",
+        ],
+      },
+      {
+        name: "Classic Pedicure",
+        price: "45+",
+        duration: "~40 mins",
+        body: [
+          "Essential foot care with shaping, cuticle cleanup, lotion, and polish.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "lashes",
+    title: "Lashes",
+    items: [
+      {
+        name: "Classic Lash Extensions",
+        price: "120",
+        body: ["Soft, natural-looking enhancement similar to mascara."],
+      },
+      {
+        name: "Hybrid Lash Extensions",
+        price: "140",
+        body: [
+          "A mix of classic and volume for fuller, but still on the natural look. Soft, balanced and a little more dimension than classic.",
+        ],
+      },
+      {
+        name: "Wispy Hybrid Lash Extension",
+        price: "155",
+        body: [
+          "Hybrid lashes with added textured ‘spikes’ for a soft, fluttery, airy effect.",
+        ],
+      },
+      {
+        name: "Volume Lash Extensions",
+        price: "165",
+        body: [
+          "Fluffy, glamorous lashes made with lightweight volume fans to create fullness.",
+        ],
+      },
+      {
+        name: "Wispy Volume Lash Extensions",
+        price: "180",
+        body: [
+          "Full, soft, feathered, textured lashes for a delicate yet dramatic finish.",
+        ],
+      },
+      {
+        name: "Lash Lift",
+        price: "60",
+        body: [
+          "Lifts, curls, and shapes your natural lashes for a soft, long-lasting curl.",
+        ],
+      },
+      {
+        name: "Lash Tint",
+        price: "25",
+        body: [
+          "A rich semi-permanent tint that deepens the colour of your natural lashes and stays smudge free.",
+        ],
+      },
+      {
+        name: "Lash Lift + Tint",
+        price: "80",
+        body: [
+          "The ultimate low-maintenance lash service. Lashes are lifted, curled and tinted for a polished, natural glam look.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "eyebrows",
+    title: "Eyebrows",
+    items: [
+      {
+        name: "Brow Shaping",
+        price: "15",
+        body: ["Precise shaping to refine your natural brow structure."],
+      },
+      {
+        name: "Brow Shaping & Tint",
+        price: "30",
+        body: ["Shaping with added tint for fuller-looking, defined brows."],
+      },
+      {
+        name: "Brow Makeover",
+        subtitle: "(Shape, Lamination & Tint)",
+        body: ["A full transformation for lifted, fuller, polished brows."],
+      },
+    ],
+  },
+];

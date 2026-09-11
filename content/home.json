@@ -1,0 +1,155 @@
+{
+  "hero": {
+    "slides": [
+      "/images/2026-02-2.jpg",
+      "/images/2026-02-1.jpg",
+      "/images/2025-12-thenailroomlashbeauty-6.jpg"
+    ],
+    "tagline": "Where elegance, self-care, and celebration come together.",
+    "intro": "Located in the heart of a busy, welcoming neighborhood in Sherwood Park, The Nail Room offers an elevated beauty experience specializing in luxury manicures, nail extensions, pedicures, lashes, brows, group events, and more — all in one luxurious space."
+  },
+  "whyClientsLoveUs": {
+    "images": [
+      "/images/2026-03-IMG_6550.jpeg",
+      "/images/2026-02-IMG_6247-scaled.jpeg",
+      "/images/2026-02-3D-The-nail-room-4_page-0001-1-scaled.jpg",
+      "/images/2026-02-products.jpg"
+    ],
+    "items": [
+      {
+        "title": "Luxury Pedicure Lounge",
+        "body": "Experience deep relaxation in our spacious, spa-inspired pedicure lounge — thoughtfully designed for comfort, tranquility, and elevated foot care in Sherwood Park."
+      },
+      {
+        "title": "Impeccable Cleanliness & Hygiene",
+        "body": "Your safety is our priority. We follow strict sanitation protocols, use hospital-grade disinfectants, and maintain the highest standards of cleanliness so you can relax with complete confidence."
+      },
+      {
+        "title": "Perfect for Group Celebrations",
+        "body": "From birthdays and bridal showers to corporate gatherings, our beautifully designed open-concept studio is the ideal destination for unforgettable group experiences."
+      },
+      {
+        "title": "Full Bar Experience",
+        "body": "Enjoy complimentary beverages or elevate your visit with premium cocktails and handcrafted mocktails — because luxury is in the details."
+      },
+      {
+        "title": "Your All-in-One Beauty Destination",
+        "body": "Conveniently located in Sherwood Park, we offer nails, lashes, and brows under one elegant roof — making self-care effortless."
+      },
+      {
+        "title": "Premium Products & Advanced Techniques",
+        "body": "We invest in high-quality products and modern techniques that prioritize nail health, lasting results, and exceptional comfort."
+      },
+      {
+        "title": "Boutique Luxury, Close to Home",
+        "body": "Locally owned and thoughtfully curated, The Nail Room delivers a refined beauty experience for clients who appreciate personalized service, attention to detail, and a welcoming atmosphere."
+      }
+    ]
+  },
+  "ourStory": {
+    "image": "/images/2025-12-thenailroomlashbeauty-7.jpg",
+    "lead": "At The Nail Room, beauty is more than a service — it’s an experience.",
+    "paragraphs": [
+      "We opened our studio with a vision: to bring an elevated, luxury beauty destination to Sherwood Park, where clients can relax, unwind, and celebrate life’s moments in a welcoming environment.",
+      "Our space is uniquely designed to feel open, airy, and luxurious — with a large pedicure lounge, spacious nail stations, and dedicated beauty areas for lashes and brows. Whether you’re visiting for a quiet self-care moment or hosting a private celebration with friends, we’ve created a setting that blends elegance with comfort.",
+      "Our team of experienced nail artists and beauty professionals are passionate about detail, creativity, and quality. Every service is performed with precision, care, and the highest standards — because you deserve nothing less."
+    ]
+  },
+  "serviceHighlights": {
+    "images": [
+      {
+        "src": "/images/2026-02-pedicure.jpg",
+        "alt": "Luxury pedicure at The Nail Room"
+      },
+      {
+        "src": "/images/2026-02-nails.jpg",
+        "alt": "Custom nail art and extensions"
+      },
+      {
+        "src": "/images/2026-02-eyelash-extention.jpg",
+        "alt": "Lash extensions"
+      }
+    ],
+    "groups": [
+      {
+        "title": "Nail & Pedicure Services",
+        "items": [
+          {
+            "name": "Luxury Pedicure Experience",
+            "body": "A spa-like pedicure designed for ultimate relaxation. Includes a soothing foot soak, exfoliation, callus care, hydrating mask, massage, and premium polish or gel finish. Enjoy complimentary drinks or upgrade to our signature cocktails from the bar."
+          },
+          {
+            "name": "Signature Manicure",
+            "body": "Beautifully shaped nails, refined cuticles, a gentle scrub, nourishing lotion, hydrating mask and your choice of high-quality polish or gel polish application."
+          },
+          {
+            "name": "BIAB Manicure",
+            "body": "A strengthening, long-lasting manicure designed to help your natural nails grow stronger and healthier. This treatment provides added durability, a flexible structure, and a chip-resistant finish — making it the perfect choice for weak or brittle nails."
+          },
+          {
+            "name": "Nail Extensions",
+            "body": "Acrylic, builder gel, gel X or sculpted extensions tailored to your length and style preference."
+          },
+          {
+            "name": "Custom Nail Art",
+            "body": "From clean minimal designs to intricate works of art — our artists bring your vision to life."
+          }
+        ]
+      },
+      {
+        "title": "Lashes & Brows",
+        "items": [
+          {
+            "name": "Lash Extensions",
+            "body": "Classic, hybrid, and volume lash sets that enhance your eyes while maintaining natural lash health."
+          },
+          {
+            "name": "Lash Lift & Tint",
+            "body": "Effortless beauty — lifted, curled, and darkened natural lashes."
+          },
+          {
+            "name": "Brow Shaping & Tint",
+            "body": "Precise shaping and soft, long-lasting tint enhance your natural brows, creating a balanced, and effortlessly polished look."
+          },
+          {
+            "name": "Brow Lamination",
+            "body": "Fluffy, full, and lifted brows with a soft, refined finish."
+          }
+        ]
+      }
+    ]
+  },
+  "groupEvents": {
+    "images": [
+      "/images/2026-03-IMG_4501-scaled.jpg",
+      "/images/2026-03-IMG_4503.jpg"
+    ],
+    "lead": "One of our biggest highlights — and a major advantage in your market.",
+    "occasions": [
+      "Birthdays",
+      "Bachelorette parties",
+      "Baby showers",
+      "Bridal parties",
+      "Graduation celebrations",
+      "Corporate appreciation events",
+      "Girls’ night out"
+    ],
+    "perksIntro": "Host your group event for 6 or more and enjoy exclusive perks:",
+    "perks": [
+      "10% off all services",
+      "Complimentary bottle(s) of champagne or wine of your choice"
+    ]
+  },
+  "barService": {
+    "image": "/images/2026-03-thenailroom-sherwoodpark.jpg",
+    "lead": "Because luxury should be enjoyable from the moment you sit down.",
+    "items": [
+      "Complimentary beverages (tea, coffee, water)",
+      "Signature cocktails",
+      "Sparkling wine & champagne",
+      "Premium mocktails",
+      "Seasonal specialty drinks"
+    ],
+    "outro": "Perfect for relaxing solo or celebrating with your favorite people."
+  }
+}

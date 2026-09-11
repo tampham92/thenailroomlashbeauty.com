@@ -1,0 +1,41 @@
+{
+  "hero": "/images/2026-02-Meet-Our-Team-1.jpg",
+  "members": [
+    {
+      "name": "Ashley Tran",
+      "role": "Founder & Nail Art Specialist",
+      "photo": "/images/2026-02-IMG_4752.jpg",
+      "bio": "With 8 years of experience and a deep love for nail art, Ashley takes pride in offering personalized, high-quality services to her community. She began in a small studio, growing her business through dedication, care, and the trust of her clients. Even as The Nail Room has expanded into a beautiful luxury space, Ashley’s mission remains unchanged: to create a welcoming environment where every client feels cared for, understood, and truly valued."
+    },
+    {
+      "name": "Mai",
+      "role": "Reception & Bar Service",
+      "photo": "/images/2026-02-mai.jpg",
+      "bio": "Mai helps set the tone for your experience with her warm hospitality and attentive service. From seamless check-ins to beautifully prepared drinks, she ensures every guest feels welcomed and valued the moment they walk in."
+    },
+    {
+      "name": "Nina",
+      "role": "Reception & Bar Service",
+      "photo": "/images/2026-02-nina.jpg",
+      "bio": "Nina’s friendly approach and eye for detail elevate every part of the front desk and bar experience. She ensures appointments flow smoothly and guests feel relaxed, cared for, and thoroughly looked after throughout their visit."
+    },
+    {
+      "name": "Tiffany",
+      "role": "Nail / Lash Technician",
+      "photo": "/images/2026-02-IMG_6067.jpeg",
+      "bio": "With over 5 years of lash artistry experience and many years in nail care, Tiffany is known for her gentle touch and delicate attention to detail, creating refined results that feel effortlessly elegant. Passionate about growth and always welcoming new challenges, she provides a cozy luxury experience where clients feel relaxed, pampered, and confidently beautiful — because every appointment is more than a service; it’s a moment of self-care and confidence."
+    },
+    {
+      "name": "Tony",
+      "role": "Nail Technician",
+      "photo": "/images/2026-02-IMG_2008.jpeg",
+      "bio": "With extensive hands-on experience in manicures, pedicures, and advanced nail services, he is dedicated to delivering exceptional care with precision and professionalism. His greatest strength lies in long nail aesthetics and intricate nail art, where his attention to detail and creativity truly stand out. His work reflects a deep understanding of nail health, sanitation, and aesthetics, ensuring every client receives results that are both beautiful and thoughtfully executed."
+    },
+    {
+      "name": "Mia",
+      "role": "Nail Technician",
+      "photo": "/images/2026-02-IMG_6017.jpeg",
+      "bio": "Mia is a skilled nail technician with over five years of experience specializing in gel and builder gel services. Known for her precision and attention to detail, she is passionate about creating clean, durable sets while ensuring each client enjoys a relaxing, elevated experience. She values genuine connections and takes pride in caring for clients who appreciate refined, high-quality nail artistry."
+    }
+  ]
+}

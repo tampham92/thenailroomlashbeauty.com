@@ -1,0 +1,216 @@
+{
+  "galleries": [
+    {
+      "slug": "our-space-gallery",
+      "title": "Our Space",
+      "blurb": "An open, airy studio designed for comfort — a large pedicure lounge, spacious nail stations, and dedicated lash and brow areas.",
+      "cover": "/images/2026-03-IMG_6550-scaled.jpeg",
+      "images": [
+        {
+          "src": "/images/2026-02-3D-The-nail-room-4_page-0001-scaled.jpg",
+          "alt": "Studio floor plan rendering"
+        },
+        {
+          "src": "/images/2025-12-thenailroomlashbeauty-11.jpg",
+          "alt": "The Nail Room interior"
+        },
+        {
+          "src": "/images/2025-12-thenailroomlashbeauty-10.jpg",
+          "alt": "Pedicure lounge"
+        },
+        {
+          "src": "/images/2025-12-thenailroomlashbeauty-12.jpg",
+          "alt": "Nail stations"
+        },
+        {
+          "src": "/images/2025-12-thenailroomlashbeauty-7.jpg",
+          "alt": "Open-concept studio"
+        }
+      ]
+    },
+    {
+      "slug": "nails-gallery",
+      "title": "Nails",
+      "blurb": "Acrylic, gel builder, Gel-X, BIAB and custom nail art — from clean minimal sets to intricate works of art.",
+      "cover": "/images/2026-02-gel-nails.jpg",
+      "images": [
+        {
+          "src": "/images/2026-02-nails-art.jpg",
+          "alt": "Custom nail art"
+        },
+        {
+          "src": "/images/2026-02-acrylic-nail.jpg",
+          "alt": "Acrylic nail set"
+        },
+        {
+          "src": "/images/2026-02-manicure.jpg",
+          "alt": "Signature manicure"
+        },
+        {
+          "src": "/images/2026-02-nails.jpg",
+          "alt": "Nail extensions"
+        },
+        {
+          "src": "/images/2026-02-IMG_6350.jpg",
+          "alt": "Nail design"
+        },
+        {
+          "src": "/images/2026-02-IMG_8318.jpg",
+          "alt": "Nail design"
+        },
+        {
+          "src": "/images/2026-02-gel-nails.jpg",
+          "alt": "Gel polish manicure"
+        },
+        {
+          "src": "/images/2026-02-Chrome-nails.jpg",
+          "alt": "Chrome nails"
+        }
+      ]
+    },
+    {
+      "slug": "pedicures-gallery",
+      "title": "Pedicures",
+      "blurb": "Our spa-inspired pedicure lounge — gold and spa pedicures, gua sha massage, and premium finishes.",
+      "cover": "/images/2026-02-IMG_5986.jpeg",
+      "images": [
+        {
+          "src": "/images/2026-02-foot-massage.jpg",
+          "alt": "Foot and leg massage"
+        },
+        {
+          "src": "/images/2026-02-foot-care.jpg",
+          "alt": "Pedicure foot care"
+        },
+        {
+          "src": "/images/2026-02-IMG_5905.jpeg",
+          "alt": "Pedicure result"
+        },
+        {
+          "src": "/images/2026-02-IMG_5898.jpeg",
+          "alt": "Pedicure result"
+        },
+        {
+          "src": "/images/2026-02-IMG_5986.jpeg",
+          "alt": "Pedicure lounge"
+        },
+        {
+          "src": "/images/2026-02-IMG_5902.jpeg",
+          "alt": "Pedicure result"
+        },
+        {
+          "src": "/images/2026-02-IMG_5910.jpeg",
+          "alt": "Pedicure result"
+        }
+      ]
+    },
+    {
+      "slug": "brows-lashes-gallery",
+      "title": "Brows & Lashes",
+      "blurb": "Classic, hybrid and volume lash sets, lash lifts, brow shaping, tinting and lamination.",
+      "cover": "/images/2026-02-eyelash-extentions.jpg",
+      "images": [
+        {
+          "src": "/images/2026-02-eyelash.jpg",
+          "alt": "Lash extensions"
+        },
+        {
+          "src": "/images/2026-02-eyelash-extentions.jpg",
+          "alt": "Volume lash extensions"
+        },
+        {
+          "src": "/images/2026-02-eyebrows-lamination.jpg",
+          "alt": "Brow lamination"
+        },
+        {
+          "src": "/images/2026-02-eyebrows-wax-tint.jpg",
+          "alt": "Brow shaping and tint"
+        }
+      ]
+    },
+    {
+      "slug": "events-gallery",
+      "title": "Events",
+      "blurb": "Birthdays, bridal parties, corporate gatherings and girls’ nights — celebrated in our open-concept studio.",
+      "cover": "/images/2026-03-IMG_4482.jpg",
+      "images": [
+        {
+          "src": "/images/2026-03-IMG_4503-scaled.jpg",
+          "alt": "Group celebration"
+        },
+        {
+          "src": "/images/2026-03-IMG_4544.jpg",
+          "alt": "Private event"
+        },
+        {
+          "src": "/images/2026-03-celabration.jpg",
+          "alt": "Celebration at The Nail Room"
+        },
+        {
+          "src": "/images/2026-03-grand-opening-event.jpg",
+          "alt": "Grand opening event"
+        },
+        {
+          "src": "/images/2026-03-IMG_4501.jpg",
+          "alt": "Group event"
+        },
+        {
+          "src": "/images/2026-03-thenailroom-event.jpg",
+          "alt": "The Nail Room event"
+        },
+        {
+          "src": "/images/2026-03-IMG_4482.jpg",
+          "alt": "Guests celebrating"
+        },
+        {
+          "src": "/images/2026-03-IMG_4503.jpg",
+          "alt": "Group celebration"
+        },
+        {
+          "src": "/images/2026-03-thenailroom-sherwoodpark.jpg",
+          "alt": "The Nail Room Sherwood Park"
+        },
+        {
+          "src": "/images/2026-02-group-event.jpg",
+          "alt": "Group event"
+        },
+        {
+          "src": "/images/2026-03-IMG_4517.jpg",
+          "alt": "Guests at a private event"
+        },
+        {
+          "src": "/images/2026-02-evanttt.png",
+          "alt": "Event at The Nail Room"
+        }
+      ]
+    },
+    {
+      "slug": "bar-service-gallery",
+      "title": "Bar Service",
+      "blurb": "Complimentary beverages, signature cocktails, premium mocktails, sparkling wine and champagne.",
+      "cover": "/images/2026-02-full-bar-services.jpg",
+      "images": [
+        {
+          "src": "/images/2026-02-drinks.jpg",
+          "alt": "Drinks at the bar"
+        },
+        {
+          "src": "/images/2026-02-cocktail.jpg",
+          "alt": "Signature cocktail"
+        },
+        {
+          "src": "/images/2026-02-full-bar-services.jpg",
+          "alt": "Full bar service"
+        },
+        {
+          "src": "/images/2026-02-drink-menu.jpg",
+          "alt": "Drink menu"
+        },
+        {
+          "src": "/images/2026-02-bar-sevices.jpg",
+          "alt": "Bar area"
+        }
+      ]
+    }
+  ]
+}
