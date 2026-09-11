@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getGalleries } from "@/data/galleries";
-import { SITE_CONFIG } from "@/lib/site-shape";
+import { SITE_URL } from "@/lib/paths";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const galleries = await getGalleries();
@@ -20,13 +20,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...staticRoutes.map((r) => ({
-      url: `${SITE_CONFIG.url}${r.path}`,
+      url: `${SITE_URL}${r.path}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: r.priority,
     })),
     ...galleries.map((g) => ({
-      url: `${SITE_CONFIG.url}/gallery/${g.slug}`,
+      url: `${SITE_URL}/gallery/${g.slug}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.6,

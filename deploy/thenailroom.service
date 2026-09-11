@@ -1,0 +1,39 @@
+# /etc/systemd/system/thenailroom.service
+#
+# Install:
+#   sudo cp deploy/thenailroom.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now thenailroom
+#
+# Logs:  journalctl -u thenailroom -f
+
+[Unit]
+Description=The Nail Room Lash & Beauty (Next.js)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+
+WorkingDirectory=/var/www/thenailroom
+
+# Secrets and per-environment settings. Must be root-owned, chmod 600.
+EnvironmentFile=/etc/thenailroom.env
+
+ExecStart=/usr/bin/npm run start
+Restart=on-failure
+RestartSec=5
+
+# Next.js writes its build cache here.
+Environment=NODE_ENV=production
+
+# The service only ever writes to the content and upload directories.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/var/lib/thenailroom /var/www/thenailroom/.next
+
+[Install]
+WantedBy=multi-user.target

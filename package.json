@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "content:init": "node scripts/init-content.mjs",
+    "deploy:build": "node scripts/init-content.mjs && next build"
   },
   "dependencies": {
     "next": "16.3.4",

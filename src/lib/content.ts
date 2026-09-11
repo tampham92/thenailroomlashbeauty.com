@@ -5,6 +5,8 @@ import type { SiteFile as SiteFileType } from "./site-shape";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
+import { CONTENT_DIR } from "./paths";
+
 export type { SiteFile } from "./site-shape";
 
 export type ServiceItem = {
@@ -84,8 +86,6 @@ export type HomeFile = {
 export type GalleriesFile = { galleries: Gallery[] };
 export type TeamFile = { hero: string; members: TeamMember[] };
 export type TestimonialsFile = { testimonials: Testimonial[] };
-
-const CONTENT_DIR = path.join(process.cwd(), "content");
 
 async function readJson<T>(name: string): Promise<T> {
   const raw = await fs.readFile(path.join(CONTENT_DIR, `${name}.json`), "utf8");

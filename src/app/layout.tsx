@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
 import { getSite } from "@/data/site";
+import { NOINDEX, SITE_URL } from "@/lib/paths";
 import { SiteProvider } from "@/components/SiteProvider";
 import "./globals.css";
 
@@ -21,7 +22,7 @@ const jost = Jost({
 export async function generateMetadata(): Promise<Metadata> {
   const site = await getSite();
   return {
-    metadataBase: new URL(site.url),
+    metadataBase: new URL(SITE_URL),
     title: {
       default: `${site.name} | Nails, Lashes & Brows in Sherwood Park`,
       template: `%s | ${site.shortName}`,
@@ -31,12 +32,13 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       siteName: site.name,
-      url: site.url,
+      url: SITE_URL,
       title: site.name,
       description: site.description,
       images: [{ url: "/images/2026-02-1.jpg", width: 1200, height: 630 }],
     },
     alternates: { canonical: "/" },
+    ...(NOINDEX ? { robots: { index: false, follow: false } } : {}),
   };
 }
 
@@ -44,8 +46,8 @@ const buildJsonLd = (site: Awaited<ReturnType<typeof getSite>>) => ({
   "@context": "https://schema.org",
   "@type": "BeautySalon",
   name: site.name,
-  url: site.url,
-  image: `${site.url}/images/logo.png`,
+  url: SITE_URL,
+  image: `${SITE_URL}/images/logo.png`,
   telephone: site.phone,
   email: site.email,
   address: {

@@ -4,6 +4,8 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { randomBytes } from "node:crypto";
 
+import { UPLOAD_DIR } from "./paths";
+
 export const UPLOAD_URL_PREFIX = "/uploads/";
 export const MAX_UPLOAD_BYTES = 12 * 1024 * 1024; // 12 MB
 
@@ -12,7 +14,7 @@ export const MAX_UPLOAD_BYTES = 12 * 1024 * 1024; // 12 MB
  * directory, so anything written there at runtime is never served. These files
  * are streamed by the /uploads/[...path] route handler instead.
  */
-export const UPLOAD_DIR = path.join(process.cwd(), "data", "uploads");
+export { UPLOAD_DIR };
 
 const EXTENSION_BY_TYPE: Record<string, string> = {
   "image/jpeg": ".jpg",

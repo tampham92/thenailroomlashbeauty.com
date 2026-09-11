@@ -108,21 +108,14 @@ through `SiteProvider`; server components call `getSite()`.
 
 ## Deploying
 
-Needs a long-running Node server (a VPS, not a static host and not a read-only
-filesystem) because the admin writes to `content/` and `data/uploads/`.
+Needs a long-running Node server with writable storage — not a static host.
+See **[DEPLOY.md](DEPLOY.md)** for the full VPS + nginx runbook.
 
-```bash
-npm ci
-npm run build
-npm run start        # keep alive with pm2/systemd behind nginx
-```
-
-Set `ADMIN_PASSWORD` and `ADMIN_SESSION_SECRET` in the process environment.
-Persist `content/` and `data/uploads/` across deploys — a plain `git pull`
-deploy keeps `content/` only if you do not check out over it.
-
-Booking is handled externally by **Fresha**; `BookNowButton` links to
-`site.bookingUrl`.
+The essentials: `content/` and `data/uploads/` are runtime state, so on a server
+point `CONTENT_DIR` and `UPLOAD_DIR` at paths **outside the checkout**
+(`content/*.json` is tracked in git but rewritten by the admin, so a `git pull`
+would otherwise overwrite it). Set `SITE_URL` per environment, and
+`SITE_NOINDEX=1` on anything that is not production.
 
 ## Notes on the migration
 
