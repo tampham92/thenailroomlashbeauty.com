@@ -58,8 +58,22 @@ sudo git clone https://github.com/tampham92/thenailroomlashbeauty.com.git \
 sudo chown -R www-data:www-data /var/www/thenailroom /var/lib/thenailroom
 ```
 
-A private repo needs credentials. Either use a deploy key, or `gh auth login`
-as the deploying user.
+Clone straight into `/var/www`, never into `/root` with a symlink: `/root` is
+mode 700, so `www-data` cannot traverse it and every npm command fails with
+EACCES — or, more confusingly, with "npm ci can only install with an existing
+package-lock.json", because npm cannot see the file at all.
+
+`chown` matters as much as the path: `npm ci` writes `node_modules/` and the
+build writes `.next/`, so the service user needs write access, not just read.
+
+A private repo needs credentials. A read-only **deploy key** is the right
+choice for a server — `gh auth login` would store an account-wide token that
+grants access to every other private repo:
+
+```bash
+ssh-keygen -t ed25519 -C "deploy@thenailroom" -f ~/.ssh/thenailroom_deploy -N ""
+cat ~/.ssh/thenailroom_deploy.pub    # add under Settings -> Deploy keys (read-only)
+```
 
 ## 3. Environment file
 
