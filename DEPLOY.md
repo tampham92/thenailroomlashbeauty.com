@@ -125,6 +125,17 @@ missing or too short.
 never overwritten) and then runs `next build`. The build prerenders pages from
 `CONTENT_DIR`, so seeding has to happen first.
 
+### Pick a free port first
+
+A VPS that already hosts something is likely to have 3000 taken:
+
+```bash
+sudo ss -ltnp 'sport = :3000'    # empty output means it is free
+```
+
+If it is in use, set a different `PORT` in `/etc/thenailroom.env` **and** the
+matching `proxy_pass` in the nginx server block. They must agree.
+
 ## 5. systemd
 
 ```bash
