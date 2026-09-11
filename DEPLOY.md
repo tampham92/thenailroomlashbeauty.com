@@ -139,6 +139,19 @@ curl -I http://127.0.0.1:3000     # expect 200 before touching nginx
 journalctl -u thenailroom -f      # logs
 ```
 
+If the log shows `EADDRINUSE`, stop the service before investigating —
+`Restart=on-failure` otherwise respawns it every 5 seconds and the port keeps
+looking busy:
+
+```bash
+sudo systemctl stop thenailroom
+sudo ss -ltnp | grep ':3000'
+```
+
+To move the app to another port, change it in **both** places or nginx will
+answer 502: `PORT` in `/etc/thenailroom.env` and `proxy_pass` in the nginx
+server block.
+
 ## 6. nginx
 
 ```bash
