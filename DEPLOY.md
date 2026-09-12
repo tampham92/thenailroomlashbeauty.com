@@ -66,13 +66,53 @@ package-lock.json", because npm cannot see the file at all.
 `chown` matters as much as the path: `npm ci` writes `node_modules/` and the
 build writes `.next/`, so the service user needs write access, not just read.
 
+### Repository credentials
+
 A private repo needs credentials. A read-only **deploy key** is the right
 choice for a server — `gh auth login` would store an account-wide token that
-grants access to every other private repo:
+grants access to every other private repo.
+
+The key has to belong to the user that runs `git pull`, which is `www-data`,
+not root. A key and an SSH host alias under `/root/.ssh` are invisible to it:
+`www-data` has `/var/www` as its home, and `git pull` then fails with
+`Could not resolve hostname github-thenailroom`.
 
 ```bash
-ssh-keygen -t ed25519 -C "deploy@thenailroom" -f ~/.ssh/thenailroom_deploy -N ""
-cat ~/.ssh/thenailroom_deploy.pub    # add under Settings -> Deploy keys (read-only)
+sudo mkdir -p /var/www/.ssh
+sudo ssh-keygen -t ed25519 -C "deploy@thenailroom" \
+     -f /var/www/.ssh/thenailroom_deploy -N ""
+
+sudo tee /var/www/.ssh/config >/dev/null <<'EOF'
+Host github-thenailroom
+    HostName github.com
+    User git
+    IdentityFile /var/www/.ssh/thenailroom_deploy
+    IdentitiesOnly yes
+    StrictHostKeyChecking accept-new
+EOF
+
+sudo chown -R www-data:www-data /var/www/.ssh
+sudo chmod 700 /var/www/.ssh
+sudo chmod 600 /var/www/.ssh/thenailroom_deploy /var/www/.ssh/config
+
+sudo cat /var/www/.ssh/thenailroom_deploy.pub
+```
+
+Add that public key to the repository under **Settings → Deploy keys**, leaving
+"Allow write access" unchecked. `StrictHostKeyChecking accept-new` matters:
+without it the first connection stops at an interactive host-key prompt that
+`sudo -u www-data` cannot answer.
+
+```bash
+sudo -u www-data ssh -T github-thenailroom    # expect "Hi tampham92/...!"
+```
+
+Then clone over that alias:
+
+```bash
+sudo -u www-data git clone \
+     github-thenailroom:tampham92/thenailroomlashbeauty.com.git \
+     /var/www/thenailroom
 ```
 
 ## 3. Environment file
