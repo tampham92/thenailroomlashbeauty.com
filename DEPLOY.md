@@ -184,6 +184,124 @@ sudo certbot --nginx -d demo.thenailroomlashbeauty.com
 
 Certbot edits the same file to add the TLS block and the HTTP redirect.
 
+## Going live on the apex domain
+
+Replacing the WordPress site at `thenailroomlashbeauty.com` with this app.
+
+### Back up WordPress first, delete it last
+
+Do not remove the WordPress files or database until the new site is verified
+and you have a copy you could restore from:
+
+```bash
+sudo tar czf ~/wordpress-files-$(date +%F).tar.gz /var/www/<wordpress-dir>
+mysqldump -u root -p <wp_database> | gzip > ~/wordpress-db-$(date +%F).sql.gz
+```
+
+### 1. Point the environment at the new host
+
+```bash
+sudo nano /etc/thenailroom.env
+```
+
+```bash
+SITE_URL="https://thenailroomlashbeauty.com"
+SITE_NOINDEX="0"
+```
+
+`SITE_NOINDEX` **must** become `0` here. Left at `1`, the live site serves
+`robots.txt` with `Disallow: /` and a `noindex` tag on every page — visitors
+see a working site while Google quietly drops it.
+
+### 2. Rebuild — restarting is not enough
+
+`SITE_URL` and `SITE_NOINDEX` are read when the module loads, and the public
+pages, `robots.txt` and `sitemap.xml` are all prerendered at build time. A
+service restart keeps serving the old values: the demo domain in every
+canonical tag and `Disallow: /` in robots.txt.
+
+```bash
+cd /var/www/thenailroom
+sudo -u www-data git pull
+sudo -u www-data node scripts/with-env.mjs /etc/thenailroom.env npm run deploy:build
+sudo systemctl restart thenailroom
+```
+
+Verify before touching nginx:
+
+```bash
+curl -s http://127.0.0.1:3000/robots.txt          # expect Allow: / and Disallow: /admin
+curl -s http://127.0.0.1:3000/ | grep canonical   # expect the apex domain
+```
+
+### 3. Switch nginx over
+
+```bash
+sudo cp deploy/nginx-thenailroomlashbeauty.com.conf \
+        /etc/nginx/sites-available/thenailroomlashbeauty.com
+sudo ln -s /etc/nginx/sites-available/thenailroomlashbeauty.com /etc/nginx/sites-enabled/
+
+ls -l /etc/nginx/sites-enabled/          # find the WordPress block
+sudo rm /etc/nginx/sites-enabled/<wordpress-site>
+
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+Adjust `proxy_pass` in the new file if the app is not on port 3000.
+
+### 4. Certificate
+
+`www` needs a DNS record of its own before certbot can validate it:
+
+```bash
+dig +short www.thenailroomlashbeauty.com    # must return the server IP
+sudo certbot --nginx -d thenailroomlashbeauty.com -d www.thenailroomlashbeauty.com
+```
+
+### 5. Retire the demo subdomain
+
+The demo and production share one service and one build, so the demo would now
+serve production canonical tags — duplicate content pointing at the apex.
+Either delete its server block, or make it redirect:
+
+```nginx
+server {
+    listen 80;
+    server_name demo.thenailroomlashbeauty.com;
+    return 301 https://thenailroomlashbeauty.com$request_uri;
+}
+```
+
+### 6. Verify, then remove WordPress
+
+```bash
+curl -sI https://thenailroomlashbeauty.com | head -1                    # 200
+curl -sI https://www.thenailroomlashbeauty.com | head -1                # 301
+curl -s  https://thenailroomlashbeauty.com/robots.txt                   # Allow: /
+curl -sI https://thenailroomlashbeauty.com/wp-content/uploads/2026/02/nails.jpg | head -2
+curl -sI https://thenailroomlashbeauty.com/about-us/ | head -2          # 308 -> /about-us
+curl -sI https://thenailroomlashbeauty.com/wp-admin | head -1           # 410
+```
+
+Only once these pass, delete the WordPress directory and database.
+
+Finally, in Google Search Console submit
+`https://thenailroomlashbeauty.com/sitemap.xml`. The old Rank Math sitemaps
+(`/sitemap_index.xml`, `/page-sitemap.xml`) redirect to it.
+
+### What the old URLs do now
+
+| Old WordPress URL | Now |
+| --- | --- |
+| `/about-us/` and every other trailing slash | 308 to the same path without the slash (Next.js does this) |
+| `/wp-content/uploads/2026/02/nails.jpg` | 301 to `/images/2026-02-nails.jpg` |
+| `/wp-content/uploads/2026/03/IMG_6550-1024x683.jpeg` | 301 to the full-size `/images/2026-03-IMG_6550.jpeg` |
+| `/sitemap_index.xml`, `/page-sitemap.xml` | 301 to `/sitemap.xml` |
+| `/wp-admin`, `/xmlrpc.php`, `/feed`, `/wp-json` | 410 Gone |
+
+The media rules matter: those image URLs are indexed and may be linked from
+Instagram and Facebook posts. Letting them 404 throws away that traffic.
+
 ## Deploying an update
 
 ```bash
