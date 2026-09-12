@@ -329,6 +329,35 @@ Finally, in Google Search Console submit
 `https://thenailroomlashbeauty.com/sitemap.xml`. The old Rank Math sitemaps
 (`/sitemap_index.xml`, `/page-sitemap.xml`) redirect to it.
 
+### If the domain is behind Cloudflare
+
+**Purge the cache after the cutover.** The WordPress server sent
+`Cache-Control: max-age=315360000` with its assets, so Cloudflare keeps serving
+the old `/wp-content/...` files from the edge for years and the new redirects
+never get a chance to run. The origin can be completely correct while the site
+still looks half-migrated. Dashboard → Caching → Configuration → Purge
+Everything, then confirm:
+
+```bash
+curl -sI https://thenailroomlashbeauty.com/wp-content/uploads/2026/02/nails.jpg | head -3
+```
+
+Expect `301` with a `location:` of `/images/2026-02-nails.jpg`. A `200` with
+`cf-cache-status: HIT` means the purge has not taken effect. Adding a dummy
+query string (`?x=1`) bypasses the cache and shows what the origin really says.
+
+**Do not enable "Cache Everything" for HTML.** Next.js serves prerendered pages
+with `Cache-Control: s-maxage=31536000`. Cloudflare honours that, so with a
+Cache Everything page rule the edge would hold every page for a year: the salon
+would save a change in `/admin`, the origin would regenerate correctly, and
+visitors would keep seeing the old page indefinitely. By default Cloudflare
+caches only static assets and leaves HTML alone (`cf-cache-status: DYNAMIC`),
+which is what this app needs.
+
+Cloudflare also injects its own managed block into `robots.txt` above the app's.
+Its `Disallow` rules target AI crawlers (GPTBot, ClaudeBot, Google-Extended);
+none of them affect Google Search indexing.
+
 ### What the old URLs do now
 
 | Old WordPress URL | Now |
