@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {
+  readAbout,
   readGalleries,
   readHome,
   readPolicy,
@@ -15,6 +16,7 @@ export default async function AdminDashboard() {
     team,
     { testimonials },
     home,
+    about,
     { categories },
     policy,
     site,
@@ -23,6 +25,7 @@ export default async function AdminDashboard() {
     readTeam(),
     readTestimonials(),
     readHome(),
+    readAbout(),
     readServices(),
     readPolicy(),
     readSite(),
@@ -38,6 +41,12 @@ export default async function AdminDashboard() {
       title: "Homepage",
       stat: `${home.hero.slides.length} hero slides · 6 sections`,
       body: "Hero, why clients love us, our story, services, events and bar service.",
+    },
+    {
+      href: "/admin/about",
+      title: "About page",
+      stat: `${about.paragraphs.length} paragraphs`,
+      body: "The banner, the story text and the photo beside it.",
     },
     {
       href: "/admin/gallery",

@@ -26,6 +26,16 @@ export type ServiceCategory = {
 
 export type ServicesFile = { categories: ServiceCategory[] };
 
+export type AboutFile = {
+  eyebrow: string;
+  title: string;
+  metaDescription: string;
+  heroImage: string;
+  sideImage: string;
+  sideImageAlt: string;
+  paragraphs: string[];
+};
+
 export type PolicyItem = { title: string; body: string };
 
 export type PolicyFile = {
@@ -103,6 +113,9 @@ async function writeJson(name: string, data: unknown): Promise<void> {
   await fs.writeFile(tmp, JSON.stringify(data, null, 2) + "\n", "utf8");
   await fs.rename(tmp, target);
 }
+
+export const readAbout = () => readJson<AboutFile>("about");
+export const writeAbout = (data: AboutFile) => writeJson("about", data);
 
 export const readSite = () => readJson<SiteFileType>("site");
 export const writeSite = (data: SiteFileType) => writeJson("site", data);

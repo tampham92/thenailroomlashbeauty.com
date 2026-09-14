@@ -13,6 +13,7 @@ export const dynamic = "force-dynamic";
 const links = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/home", label: "Homepage" },
+  { href: "/admin/about", label: "About" },
   { href: "/admin/gallery", label: "Gallery" },
   { href: "/admin/team", label: "Team" },
   { href: "/admin/testimonials", label: "Testimonials" },

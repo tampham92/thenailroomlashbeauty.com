@@ -9,6 +9,9 @@ import {
   startSession,
 } from "@/lib/auth";
 import {
+  readAbout,
+  writeAbout,
+  type AboutFile,
   writeSite,
   writeServices,
   writePolicy,
@@ -271,6 +274,57 @@ export async function saveTeamAction(
 
   revalidateSite();
   return { ok: "Team saved." };
+}
+
+/* ----------------------------------------------------------------- about */
+
+export async function saveAboutAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireAuth();
+
+  const payload = String(formData.get("payload") ?? "");
+
+  let next: AboutFile;
+  try {
+    next = JSON.parse(payload);
+  } catch {
+    return { error: "Could not read the submitted data." };
+  }
+
+  if (!next.title?.trim()) return { error: "The page title is required." };
+  if (!next.heroImage) return { error: "The banner image is required." };
+
+  const paragraphs = (next.paragraphs ?? [])
+    .map((p) => p.trim())
+    .filter(Boolean);
+  if (paragraphs.length === 0) {
+    return { error: "Add at least one paragraph." };
+  }
+
+  const before = await readAbout();
+
+  const cleaned: AboutFile = {
+    eyebrow: (next.eyebrow ?? "").trim(),
+    title: next.title.trim(),
+    metaDescription: (next.metaDescription ?? "").trim(),
+    heroImage: next.heroImage,
+    sideImage: next.sideImage ?? "",
+    sideImageAlt: (next.sideImageAlt ?? "").trim() || next.title.trim(),
+    paragraphs,
+  };
+
+  await writeAbout(cleaned);
+
+  for (const src of [before.heroImage, before.sideImage]) {
+    if (src && src !== cleaned.heroImage && src !== cleaned.sideImage) {
+      await deleteUploadIfUnused(src, false);
+    }
+  }
+
+  revalidateSite();
+  return { ok: "About page saved." };
 }
 
 /* -------------------------------------------------------------- settings */
