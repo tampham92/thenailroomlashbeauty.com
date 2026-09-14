@@ -3,6 +3,12 @@
 import Image from "next/image";
 import { useRef, useState, useTransition } from "react";
 import { uploadAction } from "./actions";
+import {
+  ACCEPT_ATTRIBUTE,
+  ACCEPTED_IMAGE_TYPES,
+  MAX_UPLOAD_BYTES,
+  formatMb,
+} from "@/lib/limits";
 
 /**
  * Uploads a file and hands the resulting public path back to the parent.
@@ -31,6 +37,28 @@ export default function ImagePicker({
 
     setError(null);
 
+    // Checked here as well as on the server: a body larger than the Server
+    // Action limit is rejected by the framework before our code runs, and the
+    // browser shows a bare "a server error occurred" page instead of this
+    // message.
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setError(
+        `That photo is ${formatMb(file.size)}. The limit is ${formatMb(MAX_UPLOAD_BYTES)} — please pick a smaller one.`,
+      );
+      event.target.value = "";
+      return;
+    }
+
+    if (!(ACCEPTED_IMAGE_TYPES as readonly string[]).includes(file.type)) {
+      setError(
+        file.type === "image/heic" || file.type === "image/heif"
+          ? "iPhone HEIC photos are not supported. In Settings → Camera → Formats choose “Most Compatible”, or export the photo as JPEG."
+          : `${file.type || "That file"} is not supported. Use JPG, PNG, WebP or AVIF.`,
+      );
+      event.target.value = "";
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", file);
 
@@ -51,7 +79,7 @@ export default function ImagePicker({
       <input
         ref={inputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp,image/avif"
+        accept={ACCEPT_ATTRIBUTE}
         onChange={handleChange}
         disabled={pending}
         aria-label={label}

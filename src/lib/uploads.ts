@@ -5,9 +5,15 @@ import path from "node:path";
 import { randomBytes } from "node:crypto";
 
 import { UPLOAD_DIR } from "./paths";
+import {
+  ACCEPTED_IMAGE_TYPES,
+  MAX_UPLOAD_BYTES,
+  formatMb,
+} from "./limits";
 
 export const UPLOAD_URL_PREFIX = "/uploads/";
-export const MAX_UPLOAD_BYTES = 12 * 1024 * 1024; // 12 MB
+
+export { MAX_UPLOAD_BYTES };
 
 /**
  * Uploads live OUTSIDE public/ on purpose: `next build` snapshots the public
@@ -30,7 +36,7 @@ export const CONTENT_TYPE_BY_EXTENSION: Record<string, string> = {
   ".avif": "image/avif",
 };
 
-export const ACCEPTED_TYPES = Object.keys(EXTENSION_BY_TYPE);
+export const ACCEPTED_TYPES = ACCEPTED_IMAGE_TYPES;
 
 function slugify(value: string): string {
   return (
@@ -74,10 +80,9 @@ export async function saveUpload(file: File): Promise<UploadResult> {
   }
 
   if (file.size > MAX_UPLOAD_BYTES) {
-    const mb = (file.size / 1024 / 1024).toFixed(1);
     return {
       ok: false,
-      error: `File is ${mb} MB — the limit is ${MAX_UPLOAD_BYTES / 1024 / 1024} MB.`,
+      error: `File is ${formatMb(file.size)} — the limit is ${formatMb(MAX_UPLOAD_BYTES)}.`,
     };
   }
 
