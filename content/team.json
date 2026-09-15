@@ -1,5 +1,11 @@
 {
-  "hero": "/images/2026-02-Meet-Our-Team-1.jpg",
+  "banner": {
+    "image": "/images/2026-02-Meet-Our-Team-1.jpg",
+    "eyebrow": "The people behind the studio",
+    "title": "Meet Our Team",
+    "lead": "",
+    "textPlacement": "overlay"
+  },
   "members": [
     {
       "name": "Ashley Tran",

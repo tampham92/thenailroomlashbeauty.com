@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import type { PageBanner } from "@/lib/content";
 import ImagePicker, { Thumb } from "./ImagePicker";
 import { IconButton, Label, inputClass } from "./ui";
 
@@ -235,6 +236,84 @@ export function TextListField({
       </ul>
       <div className="mt-3">
         <AddButton onClick={onAdd}>{addLabel}</AddButton>
+      </div>
+    </>
+  );
+}
+
+/** The cover image plus the wording drawn over it, shared by every page. */
+export function BannerFields({
+  value,
+  onChange,
+  idPrefix,
+}: {
+  value: PageBanner;
+  onChange: (patch: Partial<PageBanner>) => void;
+  idPrefix: string;
+}) {
+  return (
+    <>
+      <SingleImageField
+        label="Cover image"
+        src={value.image}
+        onChange={(image) => onChange({ image })}
+      />
+      <p className="mt-2 text-xs text-neutral-400">
+        Shown at 3:2 — a 1500 × 1000 image fills it exactly, with nothing cropped.
+      </p>
+
+      <div className="mt-6 max-w-sm">
+        <Label htmlFor={`${idPrefix}-placement`}>Where the text sits</Label>
+        <select
+          id={`${idPrefix}-placement`}
+          value={value.textPlacement}
+          onChange={(e) =>
+            onChange({
+              textPlacement: e.target.value as PageBanner["textPlacement"],
+            })
+          }
+          className={inputClass}
+        >
+          <option value="overlay">On top of the cover</option>
+          <option value="below">Below the cover</option>
+          <option value="hidden">Hidden (kept for search engines)</option>
+        </select>
+        <p className="mt-1.5 text-xs text-neutral-400">
+          Choose “Below” or “Hidden” when the cover already has wording in the
+          artwork — the title still counts for search engines either way.
+        </p>
+      </div>
+
+      <div className="mt-7 grid gap-5 sm:grid-cols-2">
+        <div>
+          <Label htmlFor={`${idPrefix}-eyebrow`}>Small line above the title</Label>
+          <input
+            id={`${idPrefix}-eyebrow`}
+            value={value.eyebrow}
+            onChange={(e) => onChange({ eyebrow: e.target.value })}
+            className={inputClass}
+          />
+        </div>
+        <div>
+          <Label htmlFor={`${idPrefix}-title`}>Title</Label>
+          <input
+            id={`${idPrefix}-title`}
+            value={value.title}
+            onChange={(e) => onChange({ title: e.target.value })}
+            className={inputClass}
+          />
+        </div>
+      </div>
+
+      <div className="mt-5">
+        <Label htmlFor={`${idPrefix}-lead`}>Sentence under the title</Label>
+        <textarea
+          id={`${idPrefix}-lead`}
+          value={value.lead}
+          onChange={(e) => onChange({ lead: e.target.value })}
+          rows={2}
+          className={inputClass}
+        />
       </div>
     </>
   );

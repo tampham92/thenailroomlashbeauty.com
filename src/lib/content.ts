@@ -24,13 +24,60 @@ export type ServiceCategory = {
   items: ServiceItem[];
 };
 
-export type ServicesFile = { categories: ServiceCategory[] };
+export type ServicesFile = {
+  banner?: PageBanner;
+  categories: ServiceCategory[];
+};
 
-export type AboutFile = {
+/**
+ * The banner at the top of a page: the cover image plus the text drawn over it.
+ *
+ * `overlayText: false` is for covers that already have wording composed into
+ * the artwork — the heading is still rendered for search engines and screen
+ * readers, just not painted on top of the picture.
+ */
+export type BannerTextPlacement = "overlay" | "below" | "hidden";
+
+export type PageBanner = {
+  image: string;
   eyebrow: string;
   title: string;
+  lead: string;
+  textPlacement: BannerTextPlacement;
+  /** Legacy flag, still read from files written before textPlacement. */
+  overlayText?: boolean;
+};
+
+/**
+ * Content files are seeded once and then owned by the admin, so a file written
+ * by an older release never gains new fields. Every banner is read through
+ * this, which fills in whatever is missing.
+ */
+export function normalizeBanner(
+  raw: Partial<PageBanner> | undefined,
+  fallback: PageBanner,
+): PageBanner {
+  const placement: BannerTextPlacement =
+    raw?.textPlacement ??
+    (raw?.overlayText === false ? "below" : undefined) ??
+    fallback.textPlacement;
+
+  return {
+    image: raw?.image ?? fallback.image,
+    eyebrow: raw?.eyebrow ?? fallback.eyebrow,
+    title: raw?.title ?? fallback.title,
+    lead: raw?.lead ?? fallback.lead,
+    textPlacement: placement,
+  };
+}
+
+export type AboutFile = {
+  /** Legacy flat fields; still read when `banner` is absent. */
+  eyebrow?: string;
+  title?: string;
+  heroImage?: string;
+  banner?: PageBanner;
   metaDescription: string;
-  heroImage: string;
   sideImage: string;
   sideImageAlt: string;
   paragraphs: string[];
@@ -51,6 +98,9 @@ export type Gallery = {
   title: string;
   blurb: string;
   cover: string;
+  /** Where the title sits relative to the cover. Defaults to "overlay". */
+  textPlacement?: BannerTextPlacement;
+  overlayText?: boolean;
   images: GalleryImage[];
 };
 
@@ -65,6 +115,10 @@ export type Testimonial = {
   quote: string;
   author: string;
   source?: string;
+  /** 1–5, optional. Displayed only — see the note in the testimonials page. */
+  rating?: number;
+  /** Free text, e.g. "March 2026". Optional. */
+  date?: string;
 };
 
 export type HomeFile = {
@@ -93,8 +147,16 @@ export type HomeFile = {
   };
 };
 
-export type GalleriesFile = { galleries: Gallery[] };
-export type TeamFile = { hero: string; members: TeamMember[] };
+export type GalleriesFile = {
+  banner?: PageBanner;
+  galleries: Gallery[];
+};
+export type TeamFile = {
+  /** Legacy: the banner image path on its own. */
+  hero?: string;
+  banner?: PageBanner;
+  members: TeamMember[];
+};
 export type TestimonialsFile = { testimonials: Testimonial[] };
 
 async function readJson<T>(name: string): Promise<T> {

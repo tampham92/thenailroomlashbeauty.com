@@ -1,17 +1,19 @@
 "use client";
 
 import { useActionState, useMemo, useState } from "react";
-import type { ServiceCategory, ServiceItem, ServicesFile } from "@/lib/content";
+import type { PageBanner, ServiceCategory, ServiceItem } from "@/lib/content";
+import type { Services } from "@/data/services";
 import { saveServicesAction, type ActionState } from "../../actions";
 import { useList } from "../../useList";
 import { Label, StatusBar, inputClass } from "../../ui";
-import { AddButton, RowControls } from "../../fields";
+import { AddButton, BannerFields, Card, RowControls } from "../../fields";
 
 const initial: ActionState = {};
 
 const blankItem: ServiceItem = { name: "", price: "", body: [""] };
 
-export default function ServicesEditor({ services }: { services: ServicesFile }) {
+export default function ServicesEditor({ services }: { services: Services }) {
+  const [banner, setBanner] = useState<PageBanner>(services.banner);
   const [categories, setCategories] = useState<ServiceCategory[]>(
     services.categories,
   );
@@ -25,7 +27,10 @@ export default function ServicesEditor({ services }: { services: ServicesFile })
   );
   const cats = useList(categories, setCategories);
 
-  const payload = useMemo(() => JSON.stringify({ categories }), [categories]);
+  const payload = useMemo(
+    () => JSON.stringify({ banner, categories }),
+    [banner, categories],
+  );
   const saved = useMemo(() => JSON.stringify(services), [services]);
   const dirty = payload !== saved;
 
@@ -76,6 +81,14 @@ export default function ServicesEditor({ services }: { services: ServicesFile })
           + Add category
         </AddButton>
       </div>
+
+      <Card title="Banner">
+        <BannerFields
+          value={banner}
+          onChange={(patch) => setBanner((b) => ({ ...b, ...patch }))}
+          idPrefix="services"
+        />
+      </Card>
 
       <div className="mt-8 space-y-4">
         {categories.map((category, ci) => {

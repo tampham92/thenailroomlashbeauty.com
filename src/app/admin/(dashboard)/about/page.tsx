@@ -1,7 +1,7 @@
 import { readAbout } from "@/lib/content";
+import { resolveAbout } from "@/data/about";
 import AboutEditor from "./AboutEditor";
 
 export default async function AdminAboutPage() {
-  const about = await readAbout();
-  return <AboutEditor about={about} />;
+  return <AboutEditor about={resolveAbout(await readAbout())} />;
 }

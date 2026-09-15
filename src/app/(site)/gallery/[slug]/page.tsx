@@ -43,6 +43,7 @@ export default async function GalleryDetailPage({
         title={gallery.title}
         lead={gallery.blurb}
         image={gallery.cover}
+        textPlacement={gallery.textPlacement ?? "overlay"}
       />
 
       <Section tone="cream" size="md">

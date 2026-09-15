@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
 import Section from "@/components/Section";
 import CtaBanner from "@/components/CtaBanner";
+import BookNowButton from "@/components/BookNowButton";
+import TestimonialGrid from "@/components/TestimonialGrid";
 import { getSite } from "@/data/site";
 import { getTestimonials } from "@/data/testimonials";
 
@@ -25,27 +27,7 @@ export default async function TestimonialsPage() {
 
       <Section tone="cream" size="md">
         {testimonials.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {testimonials.map((t) => (
-              <figure
-                key={t.author + t.quote.slice(0, 16)}
-                className="flex h-full flex-col border border-beige bg-sand/50 p-8"
-              >
-                <span className="font-display text-5xl leading-none text-taupe">
-                  “
-                </span>
-                <blockquote className="mt-3 flex-1 text-sm leading-relaxed text-muted">
-                  {t.quote}
-                </blockquote>
-                <figcaption className="mt-6 border-t border-beige pt-4">
-                  <span className="text-sm text-ink">{t.author}</span>
-                  {t.source ? (
-                    <span className="ml-2 text-xs text-muted">{t.source}</span>
-                  ) : null}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
+          <TestimonialGrid testimonials={testimonials} />
         ) : (
           <div className="mx-auto max-w-2xl border border-beige bg-sand/50 p-10 text-center sm:p-14">
             <span className="font-display text-5xl leading-none text-taupe">
@@ -60,23 +42,30 @@ export default async function TestimonialsPage() {
               note.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <BookNowButton />
+            </div>
+
+            <p className="mt-8 text-xs text-muted">
+              Already visited?{" "}
               <a
                 href={site.address.mapUrl}
                 target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center border border-ink px-8 py-3 text-xs uppercase tracking-[0.22em] transition-colors hover:bg-ink hover:text-cream"
+                rel="nofollow noopener noreferrer"
+                className="underline underline-offset-4 hover:text-ink"
               >
-                Review on Google
-              </a>
+                Leave a review on Google
+              </a>{" "}
+              or{" "}
               <a
                 href={site.social.facebook}
                 target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center px-8 py-3 text-xs uppercase tracking-[0.22em] text-muted underline underline-offset-8 transition-colors hover:text-ink"
+                rel="nofollow noopener noreferrer"
+                className="underline underline-offset-4 hover:text-ink"
               >
-                Review on Facebook
+                on Facebook
               </a>
-            </div>
+              .
+            </p>
           </div>
         )}
       </Section>

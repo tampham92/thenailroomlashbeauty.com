@@ -1,4 +1,11 @@
 {
+  "banner": {
+    "image": "/images/2026-02-Book-An-Appointment.jpg",
+    "eyebrow": "Menu",
+    "title": "Services",
+    "lead": "Prices shown in CAD. A “+” indicates a starting price — final pricing depends on length, design and condition.",
+    "textPlacement": "overlay"
+  },
   "categories": [
     {
       "id": "nails",

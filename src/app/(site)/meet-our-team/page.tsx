@@ -13,22 +13,25 @@ export const metadata: Metadata = {
 };
 
 export default async function TeamPage() {
-  const { hero: teamHero, members: team } = await getTeam();
+  const { banner, members: team } = await getTeam();
 
   return (
     <>
-      <PageHero
-        eyebrow="The people behind the studio"
-        title="Meet Our Team"
-        image={teamHero}
-      />
+      <PageHero {...banner} />
 
       <Section tone="cream" size="md">
         <div className="space-y-16 sm:space-y-20">
           {team.map((member, i) => (
             <article
               key={member.name}
-              className="grid gap-8 sm:grid-cols-[minmax(0,280px)_1fr] sm:items-center"
+              /* The photo column stays 280px on both sides: alternating with
+                 order-2 alone would drop it into the 1fr column and blow the
+                 picture up while squeezing the bio. */
+              className={`grid gap-8 sm:items-center ${
+                i % 2 === 1
+                  ? "sm:grid-cols-[1fr_minmax(0,280px)]"
+                  : "sm:grid-cols-[minmax(0,280px)_1fr]"
+              }`}
             >
               <div
                 className={`relative aspect-[3/4] overflow-hidden bg-beige ${

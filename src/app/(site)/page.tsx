@@ -1,11 +1,13 @@
 import Image from "next/image";
-import Link from "next/link";
 import HeroSlider from "@/components/HeroSlider";
 import Section from "@/components/Section";
 import SectionHeading from "@/components/SectionHeading";
 import BookNowButton from "@/components/BookNowButton";
 import CtaBanner from "@/components/CtaBanner";
 import { getHome } from "@/data/home";
+import { getTestimonials } from "@/data/testimonials";
+import TestimonialGrid from "@/components/TestimonialGrid";
+import Link from "next/link";
 
 export default async function HomePage() {
   const {
@@ -16,6 +18,8 @@ export default async function HomePage() {
     serviceHighlights,
     whyClientsLoveUs,
   } = await getHome();
+
+  const testimonials = await getTestimonials();
 
   return (
     <>
@@ -241,6 +245,29 @@ export default async function HomePage() {
           </div>
         </div>
       </Section>
+
+      {testimonials.length > 0 ? (
+        <Section id="reviews" tone="sand" size="md">
+          <SectionHeading
+            eyebrow="In their words"
+            title="What clients say"
+          />
+          <div className="mt-12">
+            <TestimonialGrid
+              testimonials={testimonials.slice(0, 3)}
+              initialCount={3}
+            />
+          </div>
+          <div className="mt-10 text-center">
+            <Link
+              href="/testimonials"
+              className="inline-flex items-center justify-center border border-ink px-8 py-3 text-xs uppercase tracking-[0.22em] transition-colors hover:bg-ink hover:text-cream"
+            >
+              Read all reviews
+            </Link>
+          </div>
+        </Section>
+      ) : null}
 
       <CtaBanner />
     </>

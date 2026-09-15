@@ -1,7 +1,7 @@
 import { readTeam } from "@/lib/content";
+import { resolveTeam } from "@/data/team";
 import TeamEditor from "./TeamEditor";
 
 export default async function AdminTeamPage() {
-  const team = await readTeam();
-  return <TeamEditor team={team} />;
+  return <TeamEditor team={resolveTeam(await readTeam())} />;
 }

@@ -12,6 +12,9 @@ export default function GalleryEditor({ gallery }: { gallery: Gallery }) {
   const [title, setTitle] = useState(gallery.title);
   const [blurb, setBlurb] = useState(gallery.blurb);
   const [cover, setCover] = useState(gallery.cover);
+  const [textPlacement, setTextPlacement] = useState(
+    gallery.textPlacement ?? "overlay",
+  );
   const [images, setImages] = useState<GalleryImage[]>(gallery.images);
 
   const [state, formAction, pending] = useActionState(
@@ -20,8 +23,8 @@ export default function GalleryEditor({ gallery }: { gallery: Gallery }) {
   );
 
   const payload = useMemo(
-    () => JSON.stringify({ title, blurb, cover, images }),
-    [title, blurb, cover, images],
+    () => JSON.stringify({ title, blurb, cover, images, textPlacement }),
+    [title, blurb, cover, images, textPlacement],
   );
 
   const saved = useMemo(
@@ -31,6 +34,7 @@ export default function GalleryEditor({ gallery }: { gallery: Gallery }) {
         blurb: gallery.blurb,
         cover: gallery.cover,
         images: gallery.images,
+        textPlacement: gallery.textPlacement ?? "overlay",
       }),
     [gallery],
   );
@@ -72,6 +76,22 @@ export default function GalleryEditor({ gallery }: { gallery: Gallery }) {
 
       <h1 className="mt-3 font-display text-3xl text-ink">{gallery.title}</h1>
       <p className="mt-1 text-xs text-neutral-400">/gallery/{gallery.slug}</p>
+
+      <div className="mt-8 max-w-sm">
+        <Label htmlFor="placement">Where the title sits</Label>
+        <select
+          id="placement"
+          value={textPlacement}
+          onChange={(e) =>
+            setTextPlacement(e.target.value as typeof textPlacement)
+          }
+          className={inputClass}
+        >
+          <option value="overlay">On top of the cover</option>
+          <option value="below">Below the cover</option>
+          <option value="hidden">Hidden (kept for search engines)</option>
+        </select>
+      </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <div>

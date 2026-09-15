@@ -12,8 +12,11 @@ import {
   readAbout,
   writeAbout,
   type AboutFile,
+  type PageBanner,
   writeSite,
+  readServices,
   writeServices,
+  type TeamFile,
   writePolicy,
   type ServicesFile,
   type PolicyFile,
@@ -71,6 +74,22 @@ function revalidateSite(): void {
   revalidatePath("/", "layout");
 }
 
+function cleanBanner(banner: PageBanner): PageBanner {
+  return {
+    image: banner.image,
+    eyebrow: (banner.eyebrow ?? "").trim(),
+    title: banner.title.trim(),
+    lead: (banner.lead ?? "").trim(),
+    textPlacement: banner.textPlacement ?? "overlay",
+  };
+}
+
+function validateBanner(banner: PageBanner | undefined): string | null {
+  if (!banner?.image) return "The cover image is required.";
+  if (!banner.title?.trim()) return "The page title is required.";
+  return null;
+}
+
 function collectHomeImages(home: HomeFile): Set<string> {
   return new Set<string>([
     ...home.hero.slides,
@@ -102,7 +121,10 @@ export async function saveGalleryAction(
   const slug = String(formData.get("slug") ?? "");
   const payload = String(formData.get("payload") ?? "");
 
-  let next: Pick<Gallery, "title" | "blurb" | "cover" | "images">;
+  let next: Pick<
+    Gallery,
+    "title" | "blurb" | "cover" | "images" | "textPlacement"
+  >;
   try {
     next = JSON.parse(payload);
   } catch {
@@ -124,6 +146,7 @@ export async function saveGalleryAction(
     title: next.title.trim(),
     blurb: next.blurb.trim(),
     cover: next.cover || next.images[0].src,
+    textPlacement: next.textPlacement ?? "overlay",
     images: next.images.map((img) => ({
       src: img.src,
       alt: (img.alt ?? "").trim() || next.title.trim(),
@@ -139,6 +162,36 @@ export async function saveGalleryAction(
 
   revalidateSite();
   return { ok: `Saved “${file.galleries[index].title}”.` };
+}
+
+export async function saveGalleryBannerAction(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
+  await requireAuth();
+
+  let next: PageBanner;
+  try {
+    next = JSON.parse(String(formData.get("payload") ?? ""));
+  } catch {
+    return { error: "Could not read the submitted data." };
+  }
+
+  const bannerError = validateBanner(next);
+  if (bannerError) return { error: bannerError };
+
+  const file = await readGalleries();
+  const previous = file.banner?.image;
+
+  file.banner = cleanBanner(next);
+  await writeGalleries(file);
+
+  if (previous && previous !== file.banner.image) {
+    await deleteUploadIfUnused(previous, false);
+  }
+
+  revalidateSite();
+  return { ok: "Gallery banner saved." };
 }
 
 /* ------------------------------------------------------------------ home */
@@ -242,21 +295,28 @@ export async function saveTeamAction(
 
   const payload = String(formData.get("payload") ?? "");
 
-  let next: { hero: string; members: TeamMember[] };
+  let next: { banner: PageBanner; members: TeamMember[] };
   try {
     next = JSON.parse(payload);
   } catch {
     return { error: "Could not read the submitted data." };
   }
 
+  const bannerError = validateBanner(next.banner);
+  if (bannerError) return { error: bannerError };
+
   const missing = next.members.findIndex((m) => !m.name?.trim());
   if (missing !== -1) return { error: `Member #${missing + 1} needs a name.` };
 
   const file = await readTeam();
-  const before = new Set([file.hero, ...file.members.map((m) => m.photo)]);
+  const before = new Set(
+    [file.banner?.image, file.hero, ...file.members.map((m) => m.photo)].filter(
+      Boolean,
+    ) as string[],
+  );
 
-  const cleaned = {
-    hero: next.hero || file.hero,
+  const cleaned: TeamFile = {
+    banner: cleanBanner(next.banner),
     members: next.members.map((m) => ({
       name: m.name.trim(),
       role: (m.role ?? "").trim(),
@@ -267,7 +327,10 @@ export async function saveTeamAction(
 
   await writeTeam(cleaned);
 
-  const after = new Set([cleaned.hero, ...cleaned.members.map((m) => m.photo)]);
+  const after = new Set([
+    cleaned.banner!.image,
+    ...cleaned.members.map((m) => m.photo),
+  ]);
   for (const src of before) {
     if (!after.has(src)) await deleteUploadIfUnused(src, false);
   }
@@ -286,41 +349,41 @@ export async function saveAboutAction(
 
   const payload = String(formData.get("payload") ?? "");
 
-  let next: AboutFile;
+  let next: {
+    banner: PageBanner;
+    metaDescription: string;
+    sideImage: string;
+    sideImageAlt: string;
+    paragraphs: string[];
+  };
   try {
     next = JSON.parse(payload);
   } catch {
     return { error: "Could not read the submitted data." };
   }
 
-  if (!next.title?.trim()) return { error: "The page title is required." };
-  if (!next.heroImage) return { error: "The banner image is required." };
+  const bannerError = validateBanner(next.banner);
+  if (bannerError) return { error: bannerError };
 
-  const paragraphs = (next.paragraphs ?? [])
-    .map((p) => p.trim())
-    .filter(Boolean);
-  if (paragraphs.length === 0) {
-    return { error: "Add at least one paragraph." };
-  }
+  const paragraphs = (next.paragraphs ?? []).map((p) => p.trim()).filter(Boolean);
+  if (paragraphs.length === 0) return { error: "Add at least one paragraph." };
 
   const before = await readAbout();
+  const beforeImages = [before.banner?.image, before.heroImage, before.sideImage];
 
   const cleaned: AboutFile = {
-    eyebrow: (next.eyebrow ?? "").trim(),
-    title: next.title.trim(),
+    banner: cleanBanner(next.banner),
     metaDescription: (next.metaDescription ?? "").trim(),
-    heroImage: next.heroImage,
     sideImage: next.sideImage ?? "",
-    sideImageAlt: (next.sideImageAlt ?? "").trim() || next.title.trim(),
+    sideImageAlt: (next.sideImageAlt ?? "").trim() || next.banner.title.trim(),
     paragraphs,
   };
 
   await writeAbout(cleaned);
 
-  for (const src of [before.heroImage, before.sideImage]) {
-    if (src && src !== cleaned.heroImage && src !== cleaned.sideImage) {
-      await deleteUploadIfUnused(src, false);
-    }
+  const afterImages = new Set([cleaned.banner!.image, cleaned.sideImage]);
+  for (const src of beforeImages) {
+    if (src && !afterImages.has(src)) await deleteUploadIfUnused(src, false);
   }
 
   revalidateSite();
@@ -421,6 +484,9 @@ export async function saveServicesAction(
     return { error: "Could not read the submitted data." };
   }
 
+  const servicesBannerError = validateBanner(next.banner);
+  if (servicesBannerError) return { error: servicesBannerError };
+
   const ids = new Set<string>();
   for (const [index, category] of next.categories.entries()) {
     if (!category.title?.trim()) {
@@ -445,7 +511,10 @@ export async function saveServicesAction(
     }
   }
 
+  const previousServices = await readServices();
+
   await writeServices({
+    banner: cleanBanner(next.banner!),
     categories: next.categories.map((c) => ({
       id: c.id,
       title: c.title.trim(),
@@ -459,6 +528,13 @@ export async function saveServicesAction(
       })),
     })),
   });
+
+  if (
+    previousServices.banner?.image &&
+    previousServices.banner.image !== next.banner!.image
+  ) {
+    await deleteUploadIfUnused(previousServices.banner.image, false);
+  }
 
   revalidateSite();
   return { ok: "Services saved." };
@@ -530,6 +606,10 @@ export async function saveTestimonialsAction(
     quote: t.quote.trim(),
     author: t.author.trim(),
     ...(t.source?.trim() ? { source: t.source.trim() } : {}),
+    ...(t.rating && t.rating >= 1 && t.rating <= 5
+      ? { rating: Math.round(t.rating) }
+      : {}),
+    ...(t.date?.trim() ? { date: t.date.trim() } : {}),
   }));
 
   await writeTestimonials(file);

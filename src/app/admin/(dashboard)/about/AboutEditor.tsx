@@ -1,16 +1,23 @@
 "use client";
 
 import { useActionState, useMemo, useState } from "react";
-import type { AboutFile } from "@/lib/content";
+import type { PageBanner } from "@/lib/content";
+import type { About } from "@/data/about";
 import { saveAboutAction, type ActionState } from "../../actions";
 import { useList } from "../../useList";
 import { Label, StatusBar, inputClass } from "../../ui";
-import { Card, SingleImageField, SubHeading, TextListField } from "../../fields";
+import {
+  BannerFields,
+  Card,
+  SingleImageField,
+  SubHeading,
+  TextListField,
+} from "../../fields";
 
 const initial: ActionState = {};
 
-export default function AboutEditor({ about }: { about: AboutFile }) {
-  const [value, setValue] = useState<AboutFile>(about);
+export default function AboutEditor({ about }: { about: About }) {
+  const [value, setValue] = useState<About>(about);
   const [state, formAction, pending] = useActionState(saveAboutAction, initial);
 
   const paragraphs = useList(value.paragraphs, (fn) =>
@@ -24,8 +31,9 @@ export default function AboutEditor({ about }: { about: AboutFile }) {
   const saved = useMemo(() => JSON.stringify(about), [about]);
   const dirty = payload !== saved;
 
-  const set = (patch: Partial<AboutFile>) =>
-    setValue((v) => ({ ...v, ...patch }));
+  const set = (patch: Partial<About>) => setValue((v) => ({ ...v, ...patch }));
+  const setBanner = (patch: Partial<PageBanner>) =>
+    setValue((v) => ({ ...v, banner: { ...v.banner, ...patch } }));
 
   return (
     <form action={formAction}>
@@ -37,33 +45,7 @@ export default function AboutEditor({ about }: { about: AboutFile }) {
       </p>
 
       <Card title="Banner">
-        <SingleImageField
-          label="Banner image"
-          src={value.heroImage}
-          onChange={(src) => set({ heroImage: src })}
-        />
-
-        <div className="mt-7 grid gap-5 sm:grid-cols-2">
-          <div>
-            <Label htmlFor="eyebrow">Small line above the title</Label>
-            <input
-              id="eyebrow"
-              value={value.eyebrow}
-              onChange={(e) => set({ eyebrow: e.target.value })}
-              placeholder="Sherwood Park, Alberta"
-              className={inputClass}
-            />
-          </div>
-          <div>
-            <Label htmlFor="title">Page title</Label>
-            <input
-              id="title"
-              value={value.title}
-              onChange={(e) => set({ title: e.target.value })}
-              className={inputClass}
-            />
-          </div>
-        </div>
+        <BannerFields value={value.banner} onChange={setBanner} idPrefix="about" />
       </Card>
 
       <Card title="Text">

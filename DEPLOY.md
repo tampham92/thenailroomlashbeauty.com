@@ -132,6 +132,7 @@ Fill in:
 ```bash
 ADMIN_PASSWORD=<the password the salon will type>
 ADMIN_SESSION_SECRET=<openssl rand -base64 32>
+NEXT_SERVER_ACTIONS_ENCRYPTION_KEY=<openssl rand -base64 32>
 
 CONTENT_DIR=/var/lib/thenailroom/content
 UPLOAD_DIR=/var/lib/thenailroom/uploads
@@ -140,6 +141,10 @@ SITE_URL=https://demo.thenailroomlashbeauty.com
 SITE_NOINDEX=1
 PORT=3000
 ```
+
+Generate `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` once and never change it. Next.js
+otherwise derives a fresh key on each build, and references issued by the
+previous build stop being decryptable after a deploy.
 
 `SITE_NOINDEX=1` is important on the demo: it serves `robots.txt` with
 `Disallow: /` and adds `noindex`, so this copy cannot compete with the real

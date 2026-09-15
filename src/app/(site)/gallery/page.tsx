@@ -4,7 +4,7 @@ import Link from "next/link";
 import PageHero from "@/components/PageHero";
 import Section from "@/components/Section";
 import CtaBanner from "@/components/CtaBanner";
-import { getGalleries } from "@/data/galleries";
+import { getGalleryIndex } from "@/data/galleries";
 
 export const metadata: Metadata = {
   title: "Gallery",
@@ -14,15 +14,11 @@ export const metadata: Metadata = {
 };
 
 export default async function GalleryIndexPage() {
-  const galleries = await getGalleries();
+  const { banner, galleries } = await getGalleryIndex();
 
   return (
     <>
-      <PageHero
-        eyebrow="Our work"
-        title="Gallery"
-        image="/images/2026-02-IMG_6247.jpeg"
-      />
+      <PageHero {...banner} />
 
       <Section tone="cream" size="md">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">

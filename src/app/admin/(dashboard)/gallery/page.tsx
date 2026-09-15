@@ -1,19 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
 import { readGalleries } from "@/lib/content";
+import { resolveGalleryBanner } from "@/data/galleries";
+import GalleryBannerEditor from "./GalleryBannerEditor";
 
 export default async function AdminGalleryList() {
-  const { galleries } = await readGalleries();
+  const file = await readGalleries();
+  const banner = resolveGalleryBanner(file);
 
   return (
     <>
       <h1 className="font-display text-3xl text-ink">Gallery</h1>
       <p className="mt-2 text-sm text-neutral-500">
-        Pick a gallery to manage its photos.
+        The banner below belongs to the gallery index. Pick a gallery to manage
+        its photos.
       </p>
 
-      <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {galleries.map((gallery) => (
+      <GalleryBannerEditor banner={banner} />
+
+      <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {file.galleries.map((gallery) => (
           <Link
             key={gallery.slug}
             href={`/admin/gallery/${gallery.slug}`}

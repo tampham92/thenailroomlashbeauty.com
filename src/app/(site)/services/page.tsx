@@ -3,7 +3,7 @@ import PageHero from "@/components/PageHero";
 import Section from "@/components/Section";
 import SectionHeading from "@/components/SectionHeading";
 import CtaBanner from "@/components/CtaBanner";
-import { getServiceCategories } from "@/data/services";
+import { getServices } from "@/data/services";
 
 export const metadata: Metadata = {
   title: "Services & Pricing",
@@ -13,16 +13,11 @@ export const metadata: Metadata = {
 };
 
 export default async function ServicesPage() {
-  const serviceCategories = await getServiceCategories();
+  const { banner, categories: serviceCategories } = await getServices();
 
   return (
     <>
-      <PageHero
-        eyebrow="Menu"
-        title="Services"
-        lead="Prices shown in CAD. A “+” indicates a starting price — final pricing depends on length, design and condition."
-        image="/images/2026-02-Book-An-Appointment.jpg"
-      />
+      <PageHero {...banner} />
 
       <nav
         aria-label="Service categories"

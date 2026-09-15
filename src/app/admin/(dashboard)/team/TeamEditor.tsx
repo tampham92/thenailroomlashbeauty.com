@@ -1,24 +1,26 @@
 "use client";
 
 import { useActionState, useMemo, useState } from "react";
-import type { TeamFile, TeamMember } from "@/lib/content";
+import type { PageBanner, TeamMember } from "@/lib/content";
+import type { Team } from "@/data/team";
 import { saveTeamAction, type ActionState } from "../../actions";
 import ImagePicker, { Thumb } from "../../ImagePicker";
+import { BannerFields, Card } from "../../fields";
 import { IconButton, Label, StatusBar, inputClass } from "../../ui";
 
 const initial: ActionState = {};
 
 const blank: TeamMember = { name: "", role: "", photo: "", bio: "" };
 
-export default function TeamEditor({ team }: { team: TeamFile }) {
-  const [hero, setHero] = useState(team.hero);
+export default function TeamEditor({ team }: { team: Team }) {
+  const [banner, setBanner] = useState<PageBanner>(team.banner);
   const [members, setMembers] = useState<TeamMember[]>(team.members);
 
   const [state, formAction, pending] = useActionState(saveTeamAction, initial);
 
   const payload = useMemo(
-    () => JSON.stringify({ hero, members }),
-    [hero, members],
+    () => JSON.stringify({ banner, members }),
+    [banner, members],
   );
   const saved = useMemo(() => JSON.stringify(team), [team]);
   const dirty = payload !== saved;
@@ -48,18 +50,13 @@ export default function TeamEditor({ team }: { team: TeamFile }) {
         Shown on the Meet Our Team page, in this order.
       </p>
 
-      <section className="mt-9 border border-neutral-200 p-5">
-        <h2 className="font-display text-xl text-ink">Page banner</h2>
-        <div className="mt-4 flex flex-wrap items-start gap-5">
-          {hero ? (
-            <Thumb src={hero} alt="Team page banner" className="h-28 w-44" />
-          ) : null}
-          <div className="min-w-[240px] flex-1">
-            <ImagePicker onUploaded={setHero} label="Replace banner" compact />
-            <p className="mt-2 text-xs text-neutral-400">{hero}</p>
-          </div>
-        </div>
-      </section>
+      <Card title="Banner">
+        <BannerFields
+          value={banner}
+          onChange={(patch) => setBanner((b) => ({ ...b, ...patch }))}
+          idPrefix="team"
+        />
+      </Card>
 
       <section className="mt-10">
         <div className="flex flex-wrap items-center justify-between gap-4">

@@ -8,7 +8,7 @@ import { getAbout } from "@/data/about";
 export async function generateMetadata(): Promise<Metadata> {
   const about = await getAbout();
   return {
-    title: about.title,
+    title: about.banner.title,
     description: about.metaDescription,
     alternates: { canonical: "/about-us" },
   };
@@ -19,11 +19,7 @@ export default async function AboutPage() {
 
   return (
     <>
-      <PageHero
-        eyebrow={about.eyebrow}
-        title={about.title}
-        image={about.heroImage}
-      />
+      <PageHero {...about.banner} />
 
       <Section tone="cream" size="md">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
