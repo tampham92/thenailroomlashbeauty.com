@@ -469,3 +469,16 @@ All four read `CONTENT_DIR` and `UPLOAD_DIR` from the environment.
 | Admin edits vanish after a deploy    | `CONTENT_DIR` still points inside the checkout               |
 | Uploaded images 404                  | `UPLOAD_DIR` not writable by the service user                |
 | Demo appears in Google               | `SITE_NOINDEX` not set to `1`                              |
+| `fatal: detected dubious ownership` | git is running as root against a `www-data`-owned repo. Use `sudo -u www-data git -C /var/www/thenailroom …`. `safe.directory` lets root read it, but pulling as root leaves root-owned files and breaks the next build |
+| `sudo: npm: command not found` | Node was installed through nvm for one user. Install it system-wide (step 1) |
+| systemd reports `status=203/EXEC` | `/usr/bin/npm` does not exist — same cause as above |
+| Build cannot read `/etc/thenailroom.env` | The file is `600 root:root`; it needs `640 root:www-data` |
+| `npm ci` reports no package-lock.json | `www-data` cannot read the checkout — check `namei -l /var/www/thenailroom/package.json` |
+| `EACCES: mkdir '/var/lib/thenailroom/content'` | `chown -R www-data:www-data /var/lib/thenailroom` was skipped |
+| `EADDRINUSE: :::3000` in the service log | Another process holds the port. Stop the unit first (it respawns every 5s), then `ss -ltnp \| grep :3000`. If it belongs to a different app, move this one to another port |
+| The site returns another app's JSON | nginx is proxying to a port owned by a different app — check `proxy_pass` against `PORT` |
+| Right `proxy_pass`, still the wrong app | Another server block is catching the hostname — `nginx -T \| grep -n server_name` |
+| Old WordPress assets still served after the cutover | Cloudflare edge cache — purge it; adding `?x=1` shows what the origin returns |
+| Admin edits never reach visitors | Cloudflare is caching HTML. Next sends `s-maxage=31536000`, so a Cache Everything rule pins pages for a year |
+| `noindex` or the wrong canonical after a domain change | The env changed but the app was only restarted — `SITE_URL`/`SITE_NOINDEX` are baked in at build time, so rebuild |
+| `Failed to find Server Action` when saving | A tab was left open across a deploy; action IDs are part of the build. Reload and redo the change — the admin shows this as a “site was updated” panel |
