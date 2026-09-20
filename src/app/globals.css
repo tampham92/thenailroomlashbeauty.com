@@ -73,6 +73,14 @@
   transform: none;
 }
 
+/* Without JS the observer never runs, so the reveal must not hide anything. */
+@media (scripting: none) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .reveal {
     opacity: 1;

@@ -5,8 +5,10 @@ import { useRef, useState, useTransition } from "react";
 import { uploadAction } from "./actions";
 import {
   ACCEPT_ATTRIBUTE,
-  ACCEPTED_IMAGE_TYPES,
+  CONVERTED_IMAGE_TYPES,
   MAX_UPLOAD_BYTES,
+  UPLOADABLE_IMAGE_TYPES,
+  detectImageType,
   formatMb,
 } from "@/lib/limits";
 
@@ -29,6 +31,7 @@ export default function ImagePicker({
 }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [converting, setConverting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,15 +52,17 @@ export default function ImagePicker({
       return;
     }
 
-    if (!(ACCEPTED_IMAGE_TYPES as readonly string[]).includes(file.type)) {
+    // iOS often reports an empty MIME type, so this checks the extension too.
+    const type = detectImageType(file.name, file.type);
+    if (!type || !(UPLOADABLE_IMAGE_TYPES as readonly string[]).includes(type)) {
       setError(
-        file.type === "image/heic" || file.type === "image/heif"
-          ? "iPhone HEIC photos are not supported. In Settings → Camera → Formats choose “Most Compatible”, or export the photo as JPEG."
-          : `${file.type || "That file"} is not supported. Use JPG, PNG, WebP or AVIF.`,
+        `${file.type || file.name} is not supported. Use a JPG, PNG, WebP, AVIF or iPhone photo.`,
       );
       event.target.value = "";
       return;
     }
+
+    setConverting((CONVERTED_IMAGE_TYPES as readonly string[]).includes(type));
 
     const formData = new FormData();
     formData.append("file", file);
@@ -69,6 +74,7 @@ export default function ImagePicker({
       } else {
         onUploaded(result.src);
       }
+      setConverting(false);
       if (inputRef.current) inputRef.current.value = "";
     });
   };
@@ -87,7 +93,9 @@ export default function ImagePicker({
       />
 
       {pending ? (
-        <p className="mt-2 text-xs text-neutral-500">Uploading…</p>
+        <p className="mt-2 text-xs text-neutral-500">
+          {converting ? "Converting the iPhone photo…" : "Uploading…"}
+        </p>
       ) : null}
 
       {error ? (

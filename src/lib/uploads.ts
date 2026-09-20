@@ -6,8 +6,10 @@ import { randomBytes } from "node:crypto";
 
 import { UPLOAD_DIR } from "./paths";
 import {
-  ACCEPTED_IMAGE_TYPES,
+  CONVERTED_IMAGE_TYPES,
   MAX_UPLOAD_BYTES,
+  UPLOADABLE_IMAGE_TYPES,
+  detectImageType,
   formatMb,
 } from "./limits";
 
@@ -27,6 +29,9 @@ const EXTENSION_BY_TYPE: Record<string, string> = {
   "image/png": ".png",
   "image/webp": ".webp",
   "image/avif": ".avif",
+  // HEIC is stored as JPEG after conversion.
+  "image/heic": ".jpg",
+  "image/heif": ".jpg",
 };
 
 export const CONTENT_TYPE_BY_EXTENSION: Record<string, string> = {
@@ -36,7 +41,7 @@ export const CONTENT_TYPE_BY_EXTENSION: Record<string, string> = {
   ".avif": "image/avif",
 };
 
-export const ACCEPTED_TYPES = ACCEPTED_IMAGE_TYPES;
+export const ACCEPTED_TYPES = UPLOADABLE_IMAGE_TYPES;
 
 function slugify(value: string): string {
   return (
@@ -71,11 +76,13 @@ export type UploadResult =
 export async function saveUpload(file: File): Promise<UploadResult> {
   if (!file || file.size === 0) return { ok: false, error: "No file selected." };
 
-  const extension = EXTENSION_BY_TYPE[file.type];
-  if (!extension) {
+  // iOS frequently reports an empty MIME type, so fall back to the extension.
+  const type = detectImageType(file.name, file.type);
+  const extension = type ? EXTENSION_BY_TYPE[type] : undefined;
+  if (!type || !extension) {
     return {
       ok: false,
-      error: `Unsupported file type "${file.type || "unknown"}". Use JPG, PNG, WebP or AVIF.`,
+      error: `Unsupported file type "${file.type || "unknown"}". Use JPG, PNG, WebP, AVIF or an iPhone HEIC photo.`,
     };
   }
 
@@ -89,7 +96,24 @@ export async function saveUpload(file: File): Promise<UploadResult> {
   await fs.mkdir(UPLOAD_DIR, { recursive: true });
 
   const name = `${slugify(file.name)}-${randomBytes(4).toString("hex")}${extension}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
+  let buffer = Buffer.from(await file.arrayBuffer());
+
+  if ((CONVERTED_IMAGE_TYPES as readonly string[]).includes(type)) {
+    try {
+      // Imported lazily: the decoder is several MB and only iPhone uploads need it.
+      const { default: convert } = await import("heic-convert");
+      buffer = Buffer.from(
+        await convert({ buffer, format: "JPEG", quality: 0.92 }),
+      );
+    } catch {
+      return {
+        ok: false,
+        error:
+          "That iPhone photo could not be converted. On the phone, open it in Photos and use Share → Save to Files, or set Settings → Camera → Formats to “Most Compatible”.",
+      };
+    }
+  }
+
   await fs.writeFile(path.join(UPLOAD_DIR, name), buffer);
 
   return { ok: true, src: `${UPLOAD_URL_PREFIX}${name}` };

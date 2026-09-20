@@ -459,6 +459,58 @@ Remember to update `SITE_URL` in `/etc/thenailroom.env` if the domain changed.
 
 All four read `CONTENT_DIR` and `UPLOAD_DIR` from the environment.
 
+## Reading the logs
+
+The app writes everything to stdout, which systemd captures. nginx keeps its
+own files.
+
+```bash
+# The Next.js app, live
+sudo journalctl -u thenailroom -f
+
+# Last 200 lines, no pager
+sudo journalctl -u thenailroom -n 200 --no-pager
+
+# Errors only, since today
+sudo journalctl -u thenailroom --since today -p err --no-pager
+
+# Around a specific time
+sudo journalctl -u thenailroom --since "2026-09-15 14:30" --until "2026-09-15 14:40"
+```
+
+When `/admin` shows an error panel it prints a short code underneath. That is
+the error digest; find the matching entry by timestamp, or search for it:
+
+```bash
+sudo journalctl -u thenailroom --no-pager | grep -B2 -A25 "<digest>"
+```
+
+nginx sits in front, so a request that never reached Node shows up only here:
+
+```bash
+sudo tail -f /var/log/nginx/error.log
+sudo tail -f /var/log/nginx/access.log
+
+# Every 5xx nginx returned
+sudo awk '$9 ~ /^5/' /var/log/nginx/access.log | tail -50
+
+# Every 413 — an upload larger than client_max_body_size
+sudo awk '$9 == 413' /var/log/nginx/access.log | tail -20
+```
+
+Which one to read: a blank page or a 502 is the app (journalctl); a 413, 404 on
+an asset, or a redirect loop is nginx.
+
+By default Ubuntu keeps the journal in memory, so it is lost on reboot. To keep
+it across restarts:
+
+```bash
+sudo mkdir -p /var/log/journal
+sudo systemd-tmpfiles --create --prefix /var/log/journal
+sudo systemctl restart systemd-journald
+journalctl --disk-usage
+```
+
 ## Troubleshooting
 
 | Symptom                              | Cause                                                          |

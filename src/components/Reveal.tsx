@@ -29,7 +29,12 @@ export default function Reveal({
           }
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+      // threshold must stay 0. Any positive value asks for that fraction of the
+      // element to be on screen at once, which a section taller than
+      // viewport / threshold can never satisfy — it then stays at opacity 0
+      // forever. The team page hit exactly that on phones once it grew past
+      // six members.
+      { threshold: 0, rootMargin: "0px 0px -40px 0px" },
     );
 
     observer.observe(el);
